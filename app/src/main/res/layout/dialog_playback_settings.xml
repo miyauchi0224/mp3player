@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/playback_settings_title"
+        android:textColor="@color/on_surface"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/volume_label"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="13sp" />
+
+    <SeekBar
+        android:id="@+id/seek_volume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/speed_label"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="13sp" />
+
+    <SeekBar
+        android:id="@+id/seek_speed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="15" />
+
+    <TextView
+        android:id="@+id/text_speed_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/surface_variant" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/sleep_timer_title"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/text_sleep_timer_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/sleep_timer_off"
+        android:textColor="@color/on_surface"
+        android:textSize="14sp" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_sleep_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_15"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15分" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_30"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30分" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_60"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="60分" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_cancel"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sleep_timer_cancel" />
+    </com.google.android.material.chip.ChipGroup>
+
+</LinearLayout>

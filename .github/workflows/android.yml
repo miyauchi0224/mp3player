@@ -1,0 +1,35 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # gradle-wrapper.jarはリポジトリに含めていないため、
+      # ラッパー経由(./gradlew)ではなくGradle本体をセットアップして実行する
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.4
+
+      - name: Lint
+        run: gradle lint
+
+      - name: Unit tests
+        run: gradle test
+
+      - name: Assemble debug APK
+        run: gradle assembleDebug

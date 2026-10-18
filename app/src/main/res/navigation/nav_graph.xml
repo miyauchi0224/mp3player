@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/libraryFragment">
+
+    <fragment
+        android:id="@+id/libraryFragment"
+        android:name="com.mp3player.app.ui.library.LibraryFragment"
+        android:label="Library" />
+
+    <fragment
+        android:id="@+id/groupSongsFragment"
+        android:name="com.mp3player.app.ui.library.GroupSongsFragment"
+        android:label="GroupSongs" />
+
+    <fragment
+        android:id="@+id/playlistListFragment"
+        android:name="com.mp3player.app.ui.playlist.PlaylistListFragment"
+        android:label="Playlists" />
+
+    <fragment
+        android:id="@+id/playlistDetailFragment"
+        android:name="com.mp3player.app.ui.playlist.PlaylistDetailFragment"
+        android:label="PlaylistDetail" />
+
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.mp3player.app.ui.favorites.FavoritesFragment"
+        android:label="Favorites" />
+
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.mp3player.app.ui.player.PlayerFragment"
+        android:label="Player" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.mp3player.app.ui.settings.SettingsFragment"
+        android:label="Settings" />
+
+    <fragment
+        android:id="@+id/folderFilterFragment"
+        android:name="com.mp3player.app.ui.settings.FolderFilterFragment"
+        android:label="FolderFilter" />
+
+    <fragment
+        android:id="@+id/staticTextFragment"
+        android:name="com.mp3player.app.ui.settings.StaticTextFragment"
+        android:label="StaticText" />
+
+    <fragment
+        android:id="@+id/recordFragment"
+        android:name="com.mp3player.app.ui.record.RecordFragment"
+        android:label="Record" />
+
+    <fragment
+        android:id="@+id/cloudImportFragment"
+        android:name="com.mp3player.app.ui.settings.CloudImportFragment"
+        android:label="CloudImport" />
+
+</navigation>

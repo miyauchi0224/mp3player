@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">mp3player</string>
+
+    <string name="tab_library">ライブラリ</string>
+    <string name="tab_playlists">プレイリスト</string>
+    <string name="tab_favorites">お気に入り</string>
+    <string name="tab_settings">設定</string>
+
+    <string name="tab_songs">曲</string>
+    <string name="tab_albums">アルバム</string>
+    <string name="tab_artists">アーティスト</string>
+    <string name="tab_folders">フォルダ</string>
+    <string name="tab_history">履歴</string>
+
+    <string name="search_hint">曲名・アーティストで検索</string>
+    <string name="empty_songs">曲が見つかりません</string>
+    <string name="empty_playlists">プレイリストがありません</string>
+    <string name="empty_favorites">お気に入りの曲がありません</string>
+
+    <string name="action_play_pause">再生/一時停止</string>
+    <string name="action_next">次へ</string>
+    <string name="action_previous">前へ</string>
+    <string name="action_repeat">リピートモード切替</string>
+    <string name="action_favorite">お気に入り切替</string>
+    <string name="action_add_to_playlist">プレイリストに追加</string>
+    <string name="action_sort">並び替え</string>
+    <string name="action_settings">再生設定</string>
+    <string name="action_equalizer">イコライザー</string>
+    <string name="action_lyrics">歌詞</string>
+    <string name="action_sleep_timer">スリープタイマー</string>
+    <string name="action_edit_tags">タグを編集</string>
+
+    <string name="playlist_create">新しいプレイリスト</string>
+    <string name="playlist_name_hint">プレイリスト名</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">キャンセル</string>
+    <string name="menu_rename">名前を変更</string>
+    <string name="menu_delete">削除</string>
+
+    <string name="permission_required_message">曲を表示するには、音楽ファイルへのアクセス許可が必要です。</string>
+    <string name="permission_grant">許可する</string>
+
+    <string name="sort_title">曲名順</string>
+    <string name="sort_artist">アーティスト順</string>
+    <string name="sort_date_added">追加日順</string>
+
+    <string name="playback_settings_title">再生設定</string>
+    <string name="volume_label">音量</string>
+    <string name="speed_label">再生速度</string>
+
+    <string name="equalizer_title">イコライザー</string>
+    <string name="equalizer_enable">イコライザーを有効にする</string>
+    <string name="equalizer_preset">プリセット</string>
+
+    <string name="lyrics_empty">歌詞が見つかりません</string>
+    <string name="lyrics_show">歌詞を表示</string>
+
+    <string name="sleep_timer_title">スリープタイマー</string>
+    <string name="sleep_timer_off">オフ</string>
+    <string name="sleep_timer_active">スリープタイマー作動中: %1$d分後に停止</string>
+    <string name="sleep_timer_cancel">タイマーを解除</string>
+
+    <string name="tag_edit_title">タグを編集</string>
+    <string name="tag_title_hint">曲名</string>
+    <string name="tag_artist_hint">アーティスト</string>
+    <string name="tag_album_hint">アルバム</string>
+
+    <string name="settings_dark_mode">ダークモード</string>
+    <string name="settings_dark_mode_system">端末の設定に従う</string>
+    <string name="settings_dark_mode_light">ライト</string>
+    <string name="settings_dark_mode_dark">ダーク</string>
+    <string name="settings_language">表示言語</string>
+    <string name="settings_language_system">端末の設定に従う</string>
+    <string name="settings_target_folders">対象フォルダ管理</string>
+    <string name="settings_export_playlist">プレイリストをエクスポート</string>
+    <string name="settings_import_playlist">プレイリストをインポート</string>
+    <string name="settings_record">音声録音</string>
+    <string name="settings_cloud_import">クラウドから読み込み</string>
+    <string name="settings_privacy_policy">プライバシーポリシー</string>
+    <string name="settings_license">ライセンス</string>
+
+    <string name="folder_filter_title">対象フォルダ管理</string>
+    <string name="folder_filter_description">チェックしたフォルダの曲のみをライブラリに表示します。すべて未選択の場合は全フォルダが対象です。</string>
+    <string name="folder_filter_save">保存</string>
+
+    <string name="export_playlist_title">エクスポートするプレイリストを選択</string>
+    <string name="export_success">プレイリストをエクスポートしました</string>
+    <string name="import_success">プレイリストをインポートしました</string>
+    <string name="import_failure">プレイリストの読み込みに失敗しました</string>
+
+    <string name="record_title">音声録音</string>
+    <string name="record_start">録音開始</string>
+    <string name="record_stop">録音停止</string>
+    <string name="record_list_title">録音した音声</string>
+    <string name="record_permission_required">録音には、マイクへのアクセス許可が必要です。</string>
+
+    <string name="cloud_import_title">クラウドから読み込み</string>
+    <string name="cloud_import_description">Googleドライブなどのクラウドストレージアプリからmp3ファイルを選択して取り込みます。</string>
+    <string name="cloud_import_select">ファイルを選択</string>
+    <string name="cloud_import_success">%1$d件のファイルを取り込みました</string>
+
+    <string name="history_recent">最近再生した曲</string>
+    <string name="history_most_played">再生回数が多い曲</string>
+    <string name="history_clear_confirm">再生履歴（最近再生した曲・再生回数）をすべて消去しますか？</string>
+
+    <string name="privacy_policy_body">本アプリは、再生履歴・お気に入り・プレイリストなどの利用データを端末内のデータベースにのみ保存し、外部サーバーへの送信は行いません。音楽ファイルへのアクセス許可は、端末内のMP3ファイルを検索・再生する目的でのみ使用します。マイクへのアクセス許可は、音声録音機能を利用する場合にのみ使用します。</string>
+    <string name="license_body">本アプリは以下のオープンソースソフトウェアを使用しています。\n\n・AndroidX (Apache License 2.0)\n・Material Components for Android (Apache License 2.0)\n・Media3 (Apache License 2.0)\n・Room (Apache License 2.0)\n・Hilt / Dagger (Apache License 2.0)\n・Glide (BSD, part MIT, part Apache 2.0)</string>
+</resources>
