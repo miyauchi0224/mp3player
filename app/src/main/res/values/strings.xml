@@ -48,6 +48,9 @@
     <string name="playback_settings_title">再生設定</string>
     <string name="volume_label">音量</string>
     <string name="speed_label">再生速度</string>
+    <string name="action_speed_down">再生速度を下げる</string>
+    <string name="action_speed_up">再生速度を上げる</string>
+    <string name="action_speed_reset">再生速度を1.0倍に戻す</string>
 
     <string name="equalizer_title">イコライザー</string>
     <string name="equalizer_enable">イコライザーを有効にする</string>

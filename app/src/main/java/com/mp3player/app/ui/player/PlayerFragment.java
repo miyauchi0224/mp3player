@@ -41,8 +41,13 @@ public class PlayerFragment extends Fragment {
     private long lyricsLoadedForSongId = -1;
     private List<LyricLine> currentLyrics = new ArrayList<>();
     private boolean lyricsVisible = false;
+    private static final float MIN_SPEED = 0.5f;
+    private static final float MAX_SPEED = 4.0f;
+    private static final float SPEED_STEP = 0.1f;
+
     private final Handler handler = new Handler(Looper.getMainLooper());
     private boolean isTrackingTouch = false;
+    private float currentSpeed = 1f;
 
     private final Runnable ticker = new Runnable() {
         @Override
@@ -92,6 +97,10 @@ public class PlayerFragment extends Fragment {
         binding.buttonEqualizer.setOnClickListener(v ->
                 new EqualizerFragment().show(getChildFragmentManager(), "equalizer"));
         binding.buttonLyrics.setOnClickListener(v -> toggleLyrics());
+        binding.buttonSpeedDown.setOnClickListener(v -> changeSpeed(currentSpeed - SPEED_STEP));
+        binding.buttonSpeedUp.setOnClickListener(v -> changeSpeed(currentSpeed + SPEED_STEP));
+        binding.textSpeed.setOnClickListener(v -> changeSpeed(1f));
+        renderSpeed(currentSpeed);
 
         binding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -122,6 +131,21 @@ public class PlayerFragment extends Fragment {
                 loadLyricsIfNeeded(song);
             }
         });
+    }
+
+    private void changeSpeed(float speed) {
+        // 0.1刻みに丸めて浮動小数点の誤差を吸収する
+        float rounded = Math.round(speed * 10f) / 10f;
+        float clamped = Math.max(MIN_SPEED, Math.min(MAX_SPEED, rounded));
+        renderSpeed(clamped);
+        viewModel.setPlaybackSpeed(clamped);
+    }
+
+    private void renderSpeed(float speed) {
+        currentSpeed = Math.round(speed * 10f) / 10f;
+        binding.textSpeed.setText(String.format(Locale.getDefault(), "%.1fx", currentSpeed));
+        binding.buttonSpeedDown.setEnabled(currentSpeed > MIN_SPEED);
+        binding.buttonSpeedUp.setEnabled(currentSpeed < MAX_SPEED);
     }
 
     private void toggleLyrics() {
@@ -192,6 +216,7 @@ public class PlayerFragment extends Fragment {
         binding.buttonPlayPause.setImageResource(state.isPlaying ? R.drawable.ic_pause : R.drawable.ic_play);
         binding.seekBar.setMax((int) state.duration);
         binding.textDuration.setText(formatDuration(state.duration));
+        renderSpeed(state.speed);
 
         Glide.with(binding.imageArt)
                 .load(state.artworkUri)
