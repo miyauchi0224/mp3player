@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- アダプティブアイコンの前景: 白いディスク+音符と、右に広がる音波。
+     ランチャーのマスクで切れないよう、中心から半径33dpのセーフゾーン内に収める -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- ディスク -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M50,54m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0" />
+
+    <!-- 音符 -->
+    <group
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:translateX="31.25"
+        android:translateY="36">
+        <path
+            android:fillColor="#FF6750A4"
+            android:pathData="M12,3v9.28c-0.47,-0.17 -0.97,-0.28 -1.5,-0.28C8.01,12 6,14.01 6,16.5S8.01,21 10.5,21c2.31,0 4.2,-1.75 4.45,-4H15V6h4V3H12z" />
+    </group>
+
+    <!-- 音波 -->
+    <path
+        android:pathData="M69.92,37.29A26,26 0,0 1,69.92 70.71"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M74.51,33.43A32,32 0,0 1,74.51 74.57"
+        android:strokeColor="#99FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round" />
+</vector>

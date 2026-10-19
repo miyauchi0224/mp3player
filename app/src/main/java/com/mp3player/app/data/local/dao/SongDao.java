@@ -57,6 +57,10 @@ public interface SongDao {
     @Query("SELECT * FROM songs WHERE id = :id")
     Song getSongByIdSync(long id);
 
+    @Query("SELECT * FROM songs WHERE title LIKE '%' || :query || '%' OR artist LIKE '%' || :query || '%' "
+            + "OR album LIKE '%' || :query || '%' ORDER BY title COLLATE NOCASE ASC")
+    List<Song> searchSongsSync(String query);
+
     @Query("SELECT * FROM songs WHERE lastPlayedAt > 0 ORDER BY lastPlayedAt DESC LIMIT :limit")
     LiveData<List<Song>> getRecentlyPlayed(int limit);
 

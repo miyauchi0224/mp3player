@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import android.content.ContentUris;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
@@ -17,6 +18,7 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionCommand;
 import androidx.media3.session.SessionResult;
@@ -36,6 +38,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
 
 import com.mp3player.app.data.local.entity.Song;
 
+@OptIn(markerClass = UnstableApi.class)
 @Singleton
 public class PlayerController {
 

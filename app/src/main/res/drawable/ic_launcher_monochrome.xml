@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 13以降のテーマアイコン用(単色)。色はランチャー側で付けられる -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- ディスクはリングで表現し、音符と重ならないようにする -->
+    <path
+        android:pathData="M50,54m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="3.5" />
+
+    <group
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:translateX="31.25"
+        android:translateY="36">
+        <path
+            android:fillColor="#FF000000"
+            android:pathData="M12,3v9.28c-0.47,-0.17 -0.97,-0.28 -1.5,-0.28C8.01,12 6,14.01 6,16.5S8.01,21 10.5,21c2.31,0 4.2,-1.75 4.45,-4H15V6h4V3H12z" />
+    </group>
+
+    <path
+        android:pathData="M74.51,33.43A32,32 0,0 1,74.51 74.57"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round" />
+</vector>

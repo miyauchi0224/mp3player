@@ -314,6 +314,17 @@ public class PlaybackService extends MediaLibraryService {
             return listeningExecutor.submit(() -> {
                 List<MediaItem> resolved = new ArrayList<>();
                 for (MediaItem item : mediaItems) {
+                    // Android Autoの音声検索(MEDIA_PLAY_FROM_SEARCH)は検索語だけを持つMediaItemで届く
+                    String query = item.requestMetadata.searchQuery;
+                    if (query != null) {
+                        List<Song> songs = query.trim().isEmpty()
+                                ? songDao.getAllSongsSync()
+                                : songDao.searchSongsSync(query.trim());
+                        for (Song song : songs) {
+                            resolved.add(songToMediaItem(song));
+                        }
+                        continue;
+                    }
                     try {
                         Song song = songDao.getSongByIdSync(Long.parseLong(item.mediaId));
                         if (song != null) {

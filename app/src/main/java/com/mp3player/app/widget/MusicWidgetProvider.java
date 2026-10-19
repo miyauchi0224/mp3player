@@ -6,7 +6,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.annotation.OptIn;
 import androidx.core.content.ContextCompat;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 
@@ -14,6 +16,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import com.mp3player.app.playback.PlaybackService;
 
+@OptIn(markerClass = UnstableApi.class)
 public class MusicWidgetProvider extends AppWidgetProvider {
 
     public static final String ACTION_TOGGLE_PLAY_PAUSE = "com.mp3player.app.widget.ACTION_TOGGLE_PLAY_PAUSE";
