@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 曲一覧のアイコン表示用セル。item_song.xml と同じIDを使い、SongAdapterで共通に扱う -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <ImageView
+        android:id="@+id/image_art"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/surface_variant"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/icon_favorite"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_margin="6dp"
+        android:src="@drawable/ic_favorite"
+        android:visibility="gone"
+        android:contentDescription="@string/action_favorite"
+        app:layout_constraintTop_toTopOf="@id/image_art"
+        app:layout_constraintEnd_toEndOf="@id/image_art" />
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="@color/on_surface"
+        android:textSize="14sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintTop_toBottomOf="@id/image_art"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="曲名" />
+
+    <TextView
+        android:id="@+id/text_artist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/on_surface_variant"
+        android:textSize="12sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintTop_toBottomOf="@id/text_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="アーティスト名" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

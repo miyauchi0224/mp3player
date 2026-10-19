@@ -3,18 +3,16 @@ package com.mp3player.app.ui.common;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-
 import com.mp3player.app.R;
 import com.mp3player.app.data.local.entity.Song;
-import com.mp3player.app.databinding.ItemSongBinding;
-import com.mp3player.app.playback.PlayerController;
 
 public class SongAdapter extends ListAdapter<Song, SongAdapter.SongViewHolder> {
 
@@ -24,10 +22,18 @@ public class SongAdapter extends ListAdapter<Song, SongAdapter.SongViewHolder> {
     }
 
     private final Listener listener;
+    private SongViewMode viewMode = SongViewMode.LIST;
 
     public SongAdapter(Listener listener) {
         super(DIFF_CALLBACK);
         this.listener = listener;
+    }
+
+    /** リスト表示／アイコン表示を切り替える。LayoutManagerの切り替えは SongListLayout が行う */
+    public void setViewMode(SongViewMode mode) {
+        if (viewMode == mode) return;
+        viewMode = mode;
+        notifyDataSetChanged();
     }
 
     private static final DiffUtil.ItemCallback<Song> DIFF_CALLBACK = new DiffUtil.ItemCallback<Song>() {
@@ -44,11 +50,17 @@ public class SongAdapter extends ListAdapter<Song, SongAdapter.SongViewHolder> {
         }
     };
 
+    @Override
+    public int getItemViewType(int position) {
+        return viewMode.ordinal();
+    }
+
     @NonNull
     @Override
     public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemSongBinding binding = ItemSongBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-        return new SongViewHolder(binding);
+        int layout = viewType == SongViewMode.GRID.ordinal() ? R.layout.item_song_grid : R.layout.item_song;
+        View view = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
+        return new SongViewHolder(view);
     }
 
     @Override
@@ -56,25 +68,28 @@ public class SongAdapter extends ListAdapter<Song, SongAdapter.SongViewHolder> {
         holder.bind(getItem(position));
     }
 
+    /** item_song.xml と item_song_grid.xml は同じIDを持つため、1つのViewHolderで両方を扱う */
     class SongViewHolder extends RecyclerView.ViewHolder {
-        private final ItemSongBinding binding;
+        private final ImageView imageArt;
+        private final TextView textTitle;
+        private final TextView textArtist;
+        private final ImageView iconFavorite;
 
-        SongViewHolder(ItemSongBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
+        SongViewHolder(View itemView) {
+            super(itemView);
+            imageArt = itemView.findViewById(R.id.image_art);
+            textTitle = itemView.findViewById(R.id.text_title);
+            textArtist = itemView.findViewById(R.id.text_artist);
+            iconFavorite = itemView.findViewById(R.id.icon_favorite);
         }
 
         void bind(Song song) {
-            binding.textTitle.setText(song.title);
-            binding.textArtist.setText(song.artist);
-            binding.iconFavorite.setVisibility(song.favorite ? View.VISIBLE : View.GONE);
-            Glide.with(binding.imageArt)
-                    .load(PlayerController.getAlbumArtUri(song.albumId))
-                    .placeholder(R.drawable.ic_music_note)
-                    .error(R.drawable.ic_music_note)
-                    .into(binding.imageArt);
-            binding.getRoot().setOnClickListener(v -> listener.onSongClick(song, getBindingAdapterPosition()));
-            binding.getRoot().setOnLongClickListener(v -> {
+            textTitle.setText(song.title);
+            textArtist.setText(song.artist);
+            iconFavorite.setVisibility(song.favorite ? View.VISIBLE : View.GONE);
+            ArtworkLoader.into(imageArt, song.id, song.albumId);
+            itemView.setOnClickListener(v -> listener.onSongClick(song, getBindingAdapterPosition()));
+            itemView.setOnLongClickListener(v -> {
                 listener.onSongLongClick(song);
                 return true;
             });

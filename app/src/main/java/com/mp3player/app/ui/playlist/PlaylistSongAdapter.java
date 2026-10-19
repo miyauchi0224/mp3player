@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 import com.mp3player.app.R;
 import com.mp3player.app.data.local.entity.Song;
 import com.mp3player.app.databinding.ItemSongBinding;
-import com.mp3player.app.playback.PlayerController;
+import com.mp3player.app.ui.common.ArtworkLoader;
 
 public class PlaylistSongAdapter extends RecyclerView.Adapter<PlaylistSongAdapter.ViewHolder> {
 
@@ -84,11 +83,7 @@ public class PlaylistSongAdapter extends RecyclerView.Adapter<PlaylistSongAdapte
             binding.textTitle.setText(song.title);
             binding.textArtist.setText(song.artist);
             binding.iconFavorite.setVisibility(song.favorite ? View.VISIBLE : View.GONE);
-            Glide.with(binding.imageArt)
-                    .load(PlayerController.getAlbumArtUri(song.albumId))
-                    .placeholder(R.drawable.ic_music_note)
-                    .error(R.drawable.ic_music_note)
-                    .into(binding.imageArt);
+            ArtworkLoader.into(binding.imageArt, song.id, song.albumId);
             binding.getRoot().setOnClickListener(v -> listener.onSongClick(song, getBindingAdapterPosition()));
         }
     }

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.List;
+import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -12,6 +13,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 import com.mp3player.app.data.MusicRepository;
 import com.mp3player.app.data.local.entity.Song;
+import com.mp3player.app.playback.GroupPlayMode;
+import com.mp3player.app.playback.GroupPlayPlanner;
 import com.mp3player.app.playback.PlayerController;
 
 @HiltViewModel
@@ -21,6 +24,7 @@ public class GroupSongsViewModel extends ViewModel {
     private final PlayerController playerController;
     private LiveData<List<Song>> songs = new MutableLiveData<>();
     private boolean loaded = false;
+    private final Random random = new Random();
 
     @Inject
     public GroupSongsViewModel(MusicRepository repository, PlayerController playerController) {
@@ -52,6 +56,11 @@ public class GroupSongsViewModel extends ViewModel {
 
     public void playFrom(List<Song> queue, int index) {
         playerController.playQueue(queue, index);
+    }
+
+    public void playWithMode(List<Song> queue, GroupPlayMode mode) {
+        if (queue.isEmpty()) return;
+        playerController.playQueue(queue, GroupPlayPlanner.plan(mode, queue.size(), random));
     }
 
     public void toggleFavorite(Song song) {

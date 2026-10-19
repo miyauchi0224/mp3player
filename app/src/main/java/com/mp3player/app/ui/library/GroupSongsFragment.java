@@ -10,22 +10,29 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 import com.mp3player.app.R;
+import com.mp3player.app.data.UserPreferences;
 import com.mp3player.app.data.local.entity.Song;
 import com.mp3player.app.databinding.FragmentSongListBinding;
+import com.mp3player.app.playback.GroupPlayMode;
 import com.mp3player.app.ui.common.SongAdapter;
+import com.mp3player.app.ui.common.SongListLayout;
 import com.mp3player.app.ui.common.SongMenuHelper;
 import com.mp3player.app.ui.playlist.AddToPlaylistDialogFragment;
 
 @AndroidEntryPoint
 public class GroupSongsFragment extends Fragment {
+
+    @Inject
+    UserPreferences userPreferences;
 
     private FragmentSongListBinding binding;
     private GroupSongsViewModel viewModel;
@@ -68,6 +75,16 @@ public class GroupSongsFragment extends Fragment {
             }
         });
 
+        binding.playModeBar.setVisibility(View.VISIBLE);
+        binding.buttonPlayRepeatAll.setText(repeatAllLabel(groupType));
+        binding.buttonPlayShuffle.setOnClickListener(v -> viewModel.playWithMode(currentSongs, GroupPlayMode.SHUFFLE));
+        binding.buttonPlayRepeatOne.setOnClickListener(v -> viewModel.playWithMode(currentSongs, GroupPlayMode.REPEAT_ONE));
+        binding.buttonPlayRepeatAll.setOnClickListener(v -> viewModel.playWithMode(currentSongs, GroupPlayMode.REPEAT_ALL));
+
+        binding.buttonViewMode.setVisibility(View.VISIBLE);
+        binding.buttonViewMode.setOnClickListener(v ->
+                userPreferences.setSongViewMode(userPreferences.getSongViewMode().getValue().toggle()));
+
         adapter = new SongAdapter(new SongAdapter.Listener() {
             @Override
             public void onSongClick(Song song, int position) {
@@ -96,8 +113,9 @@ public class GroupSongsFragment extends Fragment {
                 });
             }
         });
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
+        userPreferences.getSongViewMode().observe(getViewLifecycleOwner(), mode ->
+                SongListLayout.apply(binding.recyclerView, adapter, mode, binding.buttonViewMode));
 
         viewModel.getSongs().observe(getViewLifecycleOwner(), songs -> {
             currentSongs = songs != null ? songs : new ArrayList<>();
@@ -105,6 +123,12 @@ public class GroupSongsFragment extends Fragment {
             binding.textEmpty.setText(R.string.empty_songs);
             binding.textEmpty.setVisibility(currentSongs.isEmpty() ? View.VISIBLE : View.GONE);
         });
+    }
+
+    private static int repeatAllLabel(String groupType) {
+        if ("folder".equals(groupType)) return R.string.play_mode_repeat_folder;
+        if ("artist".equals(groupType)) return R.string.play_mode_repeat_artist;
+        return R.string.play_mode_repeat_album;
     }
 
     @Override

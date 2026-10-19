@@ -30,6 +30,15 @@
             android:imeOptions="actionSearch" />
 
         <ImageButton
+            android:id="@+id/button_view_mode"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/ic_grid_view"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_view_mode_grid" />
+
+        <ImageButton
             android:id="@+id/button_sort"
             android:layout_width="40dp"
             android:layout_height="40dp"

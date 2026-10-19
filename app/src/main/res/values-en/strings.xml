@@ -109,4 +109,11 @@
 
     <string name="privacy_policy_body">This app stores playback history, favorites, and playlists only in a local database on your device, and never sends this data to any external server. Access to your music files is used solely to search and play MP3 files on your device. Microphone access is used only when you use the voice recording feature.</string>
     <string name="license_body">This app uses the following open source software.\n\n- AndroidX (Apache License 2.0)\n- Material Components for Android (Apache License 2.0)\n- Media3 (Apache License 2.0)\n- Room (Apache License 2.0)\n- Hilt / Dagger (Apache License 2.0)\n- Glide (BSD, part MIT, part Apache 2.0)</string>
+    <string name="play_mode_shuffle">Shuffle</string>
+    <string name="play_mode_repeat_one">Repeat one</string>
+    <string name="play_mode_repeat_album">Repeat album</string>
+    <string name="play_mode_repeat_folder">Repeat folder</string>
+    <string name="play_mode_repeat_artist">Repeat artist</string>
+    <string name="action_view_mode_grid">Switch to icon view</string>
+    <string name="action_view_mode_list">Switch to list view</string>
 </resources>

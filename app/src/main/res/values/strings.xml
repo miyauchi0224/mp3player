@@ -109,4 +109,11 @@
 
     <string name="privacy_policy_body">本アプリは、再生履歴・お気に入り・プレイリストなどの利用データを端末内のデータベースにのみ保存し、外部サーバーへの送信は行いません。音楽ファイルへのアクセス許可は、端末内のMP3ファイルを検索・再生する目的でのみ使用します。マイクへのアクセス許可は、音声録音機能を利用する場合にのみ使用します。</string>
     <string name="license_body">本アプリは以下のオープンソースソフトウェアを使用しています。\n\n・AndroidX (Apache License 2.0)\n・Material Components for Android (Apache License 2.0)\n・Media3 (Apache License 2.0)\n・Room (Apache License 2.0)\n・Hilt / Dagger (Apache License 2.0)\n・Glide (BSD, part MIT, part Apache 2.0)</string>
+    <string name="play_mode_shuffle">シャッフル</string>
+    <string name="play_mode_repeat_one">1曲リピート</string>
+    <string name="play_mode_repeat_album">アルバムをリピート</string>
+    <string name="play_mode_repeat_folder">フォルダをリピート</string>
+    <string name="play_mode_repeat_artist">アーティストをリピート</string>
+    <string name="action_view_mode_grid">アイコン表示に切り替え</string>
+    <string name="action_view_mode_list">リスト表示に切り替え</string>
 </resources>

@@ -15,13 +15,20 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 import com.mp3player.app.R;
+import com.mp3player.app.data.UserPreferences;
 import com.mp3player.app.databinding.FragmentLibraryBinding;
+import com.mp3player.app.ui.common.SongListLayout;
 
 @AndroidEntryPoint
 public class LibraryFragment extends Fragment {
+
+    @Inject
+    UserPreferences userPreferences;
 
     private FragmentLibraryBinding binding;
     private LibraryViewModel viewModel;
@@ -64,6 +71,10 @@ public class LibraryFragment extends Fragment {
         });
 
         binding.buttonSort.setOnClickListener(this::showSortMenu);
+        binding.buttonViewMode.setOnClickListener(v ->
+                userPreferences.setSongViewMode(userPreferences.getSongViewMode().getValue().toggle()));
+        userPreferences.getSongViewMode().observe(getViewLifecycleOwner(), mode ->
+                SongListLayout.updateToggle(binding.buttonViewMode, mode));
     }
 
     private void showSortMenu(View anchor) {

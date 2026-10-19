@@ -17,8 +17,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.Player;
 import androidx.navigation.Navigation;
 
-import com.bumptech.glide.Glide;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +28,7 @@ import com.mp3player.app.R;
 import com.mp3player.app.data.local.entity.Song;
 import com.mp3player.app.databinding.FragmentPlayerBinding;
 import com.mp3player.app.playback.PlaybackUiState;
+import com.mp3player.app.ui.common.ArtworkLoader;
 import com.mp3player.app.ui.playlist.AddToPlaylistDialogFragment;
 
 @AndroidEntryPoint
@@ -218,11 +217,7 @@ public class PlayerFragment extends Fragment {
         binding.textDuration.setText(formatDuration(state.duration));
         renderSpeed(state.speed);
 
-        Glide.with(binding.imageArt)
-                .load(state.artworkUri)
-                .placeholder(R.drawable.ic_music_note)
-                .error(R.drawable.ic_music_note)
-                .into(binding.imageArt);
+        ArtworkLoader.into(binding.imageArt, state.songId, state.artworkUri);
 
         if (state.repeatMode == Player.REPEAT_MODE_ONE) {
             binding.buttonRepeat.setImageResource(R.drawable.ic_repeat_one);

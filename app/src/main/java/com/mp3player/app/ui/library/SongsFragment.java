@@ -9,22 +9,28 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 import com.mp3player.app.R;
+import com.mp3player.app.data.UserPreferences;
 import com.mp3player.app.data.local.entity.Song;
 import com.mp3player.app.databinding.FragmentSongListBinding;
 import com.mp3player.app.ui.common.SongAdapter;
+import com.mp3player.app.ui.common.SongListLayout;
 import com.mp3player.app.ui.common.SongMenuHelper;
 import com.mp3player.app.ui.playlist.AddToPlaylistDialogFragment;
 
 @AndroidEntryPoint
 public class SongsFragment extends Fragment {
+
+    @Inject
+    UserPreferences userPreferences;
 
     private FragmentSongListBinding binding;
     private LibraryViewModel viewModel;
@@ -72,8 +78,10 @@ public class SongsFragment extends Fragment {
                 });
             }
         });
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
+        // 切り替えボタンは親の LibraryFragment のヘッダーにある
+        userPreferences.getSongViewMode().observe(getViewLifecycleOwner(), mode ->
+                SongListLayout.apply(binding.recyclerView, adapter, mode, null));
 
         viewModel.getFilteredSongs().observe(getViewLifecycleOwner(), songs -> {
             currentSongs = songs != null ? songs : new ArrayList<>();

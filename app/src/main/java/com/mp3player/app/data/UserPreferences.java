@@ -9,10 +9,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.hilt.android.qualifiers.ApplicationContext;
+
+import com.mp3player.app.ui.common.SongViewMode;
 
 @Singleton
 public class UserPreferences {
@@ -29,13 +34,17 @@ public class UserPreferences {
     private static final String KEY_DARK_MODE = "dark_mode";
     private static final String KEY_LANGUAGE = "language";
     private static final String KEY_TARGET_FOLDERS = "target_folders";
+    private static final String KEY_SONG_VIEW_MODE = "song_view_mode";
 
     private final SharedPreferences prefs;
     private final List<Runnable> targetFoldersListeners = new CopyOnWriteArrayList<>();
+    private final MutableLiveData<SongViewMode> songViewMode;
 
     @Inject
     public UserPreferences(@ApplicationContext Context context) {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        // 初期値はコンストラクタで渡す（setValueはメインスレッド専用で、ここは別スレッドから呼ばれ得るため）
+        songViewMode = new MutableLiveData<>(SongViewMode.fromKey(prefs.getString(KEY_SONG_VIEW_MODE, null)));
     }
 
     public void addTargetFoldersListener(Runnable listener) {
@@ -71,5 +80,15 @@ public class UserPreferences {
         for (Runnable listener : targetFoldersListeners) {
             listener.run();
         }
+    }
+
+    /** 曲一覧の表示方法（リスト／アイコン）。全ての曲一覧画面で共有する */
+    public LiveData<SongViewMode> getSongViewMode() {
+        return songViewMode;
+    }
+
+    public void setSongViewMode(SongViewMode mode) {
+        prefs.edit().putString(KEY_SONG_VIEW_MODE, mode.key()).apply();
+        songViewMode.setValue(mode);
     }
 }

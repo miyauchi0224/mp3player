@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -45,7 +46,60 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:visibility="gone"
             android:contentDescription="@null" />
+
+        <ImageButton
+            android:id="@+id/button_view_mode"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_grid_view"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"
+            android:contentDescription="@string/action_view_mode_grid" />
     </LinearLayout>
+
+    <!-- アルバム／フォルダ単位の再生モード（グループ曲一覧でのみ表示） -->
+    <HorizontalScrollView
+        android:id="@+id/play_mode_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_play_shuffle"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/play_mode_shuffle"
+                app:icon="@drawable/ic_shuffle" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_play_repeat_one"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/play_mode_repeat_one"
+                app:icon="@drawable/ic_repeat_one" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_play_repeat_all"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/play_mode_repeat_album"
+                app:icon="@drawable/ic_repeat" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <FrameLayout
         android:layout_width="match_parent"

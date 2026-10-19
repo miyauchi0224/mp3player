@@ -15,12 +15,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
-import com.bumptech.glide.Glide;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 import com.mp3player.app.R;
 import com.mp3player.app.databinding.ActivityMainBinding;
+import com.mp3player.app.ui.common.ArtworkLoader;
 import com.mp3player.app.ui.library.LibraryViewModel;
 import com.mp3player.app.ui.player.PlayerViewModel;
 
@@ -76,11 +76,7 @@ public class MainActivity extends AppCompatActivity {
             binding.miniPlayerRoot.textArtist.setText(state.artist);
             binding.miniPlayerRoot.buttonPlayPause.setImageResource(
                     state.isPlaying ? R.drawable.ic_pause : R.drawable.ic_play);
-            Glide.with(binding.miniPlayerRoot.imageArt)
-                    .load(state.artworkUri)
-                    .placeholder(R.drawable.ic_music_note)
-                    .error(R.drawable.ic_music_note)
-                    .into(binding.miniPlayerRoot.imageArt);
+            ArtworkLoader.into(binding.miniPlayerRoot.imageArt, state.songId, state.artworkUri);
         });
     }
 

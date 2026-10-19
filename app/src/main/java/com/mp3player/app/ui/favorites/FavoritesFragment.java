@@ -9,23 +9,29 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 import com.mp3player.app.R;
+import com.mp3player.app.data.UserPreferences;
 import com.mp3player.app.data.local.entity.Song;
 import com.mp3player.app.databinding.FragmentSongListBinding;
 import com.mp3player.app.ui.common.SongAdapter;
+import com.mp3player.app.ui.common.SongListLayout;
 import com.mp3player.app.ui.common.SongMenuHelper;
 import com.mp3player.app.ui.library.TagEditDialogFragment;
 import com.mp3player.app.ui.playlist.AddToPlaylistDialogFragment;
 
 @AndroidEntryPoint
 public class FavoritesFragment extends Fragment {
+
+    @Inject
+    UserPreferences userPreferences;
 
     private FragmentSongListBinding binding;
     private FavoritesViewModel viewModel;
@@ -46,6 +52,9 @@ public class FavoritesFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(FavoritesViewModel.class);
 
         binding.header.setVisibility(View.VISIBLE);
+        binding.buttonViewMode.setVisibility(View.VISIBLE);
+        binding.buttonViewMode.setOnClickListener(v ->
+                userPreferences.setSongViewMode(userPreferences.getSongViewMode().getValue().toggle()));
         binding.textHeaderTitle.setText(R.string.tab_favorites);
         binding.buttonBack.setVisibility(View.GONE);
         binding.fabPlayAll.setVisibility(View.VISIBLE);
@@ -83,8 +92,9 @@ public class FavoritesFragment extends Fragment {
                 });
             }
         });
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
+        userPreferences.getSongViewMode().observe(getViewLifecycleOwner(), mode ->
+                SongListLayout.apply(binding.recyclerView, adapter, mode, binding.buttonViewMode));
 
         viewModel.getFavorites().observe(getViewLifecycleOwner(), songs -> {
             currentSongs = songs != null ? songs : new ArrayList<>();

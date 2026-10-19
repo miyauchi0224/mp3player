@@ -131,14 +131,30 @@ public class PlayerController {
 
     public void playQueue(List<Song> songs, int startIndex) {
         runOrQueue(() -> {
-            List<MediaItem> items = new ArrayList<>();
-            for (Song song : songs) {
-                items.add(toMediaItem(song));
-            }
-            mediaController.setMediaItems(items, startIndex, 0);
-            mediaController.prepare();
-            mediaController.play();
+            // 直前のシャッフル再生の設定が、通常の再生に引き継がれないようにする
+            mediaController.setShuffleModeEnabled(false);
+            startQueue(songs, startIndex);
         });
+    }
+
+    /** アルバム／フォルダ単位の再生モード（シャッフル・リピート）を適用して先頭から再生する */
+    public void playQueue(List<Song> songs, PlayPlan plan) {
+        runOrQueue(() -> {
+            // シャッフルは PlayPlan の再生順で表現するので、プレーヤーのシャッフルは使わない
+            mediaController.setShuffleModeEnabled(false);
+            mediaController.setRepeatMode(plan.repeatMode);
+            startQueue(plan.applyTo(songs), 0);
+        });
+    }
+
+    private void startQueue(List<Song> songs, int startIndex) {
+        List<MediaItem> items = new ArrayList<>();
+        for (Song song : songs) {
+            items.add(toMediaItem(song));
+        }
+        mediaController.setMediaItems(items, startIndex, 0);
+        mediaController.prepare();
+        mediaController.play();
     }
 
     private MediaItem toMediaItem(Song song) {
