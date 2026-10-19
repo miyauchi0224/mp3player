@@ -65,15 +65,27 @@ Google Play では「Play アプリ署名」が必須。開発者は**アップ�
 
 ### 鍵の作成
 
-JDK の keytool で作る。保存場所はリポジトリの**外**にする。
+JDK の keytool で作る。保存場所はリポジトリの**外**にする。`<ユーザー名>` は自分のユーザー名に置き換える。
+
+PowerShell（Windows）の場合。コマンドは1行で入力する（PowerShell では行末の `\` で改行を続けられない）。
+
+```powershell
+New-Item -ItemType Directory -Force C:\Users\<ユーザー名>\keys
+keytool -genkeypair -v -keystore C:\Users\<ユーザー名>\keys\mp3player-upload.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000
+```
+
+bash（Git Bash・macOS・Linux）の場合。
 
 ```sh
+mkdir -p ~/keys
 keytool -genkeypair -v \
-  -keystore C:/Users/<ユーザー名>/keys/mp3player-upload.jks \
+  -keystore ~/keys/mp3player-upload.jks \
   -alias upload \
   -keyalg RSA -keysize 2048 \
   -validity 10000
 ```
+
+実行するとキーストアのパスワード（2回）と、名前などの項目を聞かれる。名前などは空欄のまま Enter でもよく、最後の確認には `y` で答える。
 
 - パスワードと鍵ファイルは、パスワード管理ツールなど安全な場所にバックアップする。
 - **鍵ファイルとパスワードは絶対にコミットしない。**
