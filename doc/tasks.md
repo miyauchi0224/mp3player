@@ -2,7 +2,7 @@
 
 stories.mdの各ストーリーを実装単位に分解したタスク一覧。No.はstories.mdのストーリーNoに対応。
 No.1〜30は実装済み。2026-10-19 時点で、エミュレータ（Android 11 / API 30、32bit版）での主要画面の動作確認と単体テスト（19件）まで実施。実機での確認は未実施（→ No.35）。
-No.31以降はリリースに向けたタスク（2026-10-19 のレビューで追加）。
+No.31以降はリリースに向けたタスク（2026-10-19 のレビューで追加）。実機・Play Console での作業が必要なもの以外は実装済み（単体テスト111件、エミュレータでの動作確認済み）。
 
 ## 基盤・共通
 
@@ -60,7 +60,7 @@ No.31以降はリリースに向けたタスク（2026-10-19 のレビューで�
 - [x] MediaSessionService（MediaLibraryService）実装
 - [x] Foreground Service化・通知（Media3標準通知）
 - [x] アプリ終了後の再生継続
-- [ ] バッテリー最適化除外案内ダイアログ（未実装 → No.47）
+- [x] バッテリー最適化除外案内ダイアログ（未実装 → No.47）
 
 ### No.8 ロック画面・通知欄操作
 - [x] MediaStyle通知（Media3標準機能で自動対応）
@@ -82,7 +82,7 @@ No.31以降はリリースに向けたタスク（2026-10-19 のレビューで�
 - [x] MediaStore.Audioクエリ実装
 - [x] Android 13以降のREAD_MEDIA_AUDIO対応
 - [x] スキャン結果のRoom DB保存処理
-- [ ] スキャン中のプログレス表示UI（未実装、バックグラウンド実行のみ → No.46）
+- [x] スキャン中のプログレス表示UI（未実装、バックグラウンド実行のみ → No.46）
 
 ### No.12 フォルダ読み取り
 - [x] 対象フォルダ管理設定画面作成（検出済みフォルダのチェックリスト方式）
@@ -191,30 +191,30 @@ No.31以降はリリースに向けたタスク（2026-10-19 のレビューで�
 ## リリース準備：必須
 
 ### No.31 Android 16（API 36）対応
-- [ ] compileSdk・targetSdk を 36 に変更
-- [ ] edge-to-edge 表示への対応（Android 15以降を対象にすると強制される）。WindowInsetsで、ステータスバー・ナビゲーションバーと画面上部・ボトムナビ・ミニプレイヤーが重ならないようにする
-- [ ] 予測型「戻る」ジェスチャーの動作確認（AndroidManifestの enableOnBackInvokedCallback）
-- [ ] 大画面（幅600dp以上）で画面の向き・サイズ固定が無視される変更への対応確認
+- [x] compileSdk・targetSdk を 36 に変更
+- [x] edge-to-edge 表示への対応（Android 15以降を対象にすると強制される）。WindowInsetsで、ステータスバー・ナビゲーションバーと画面上部・ボトムナビ・ミニプレイヤーが重ならないようにする（全OSで EdgeToEdge.enable を呼び、システムバー分の余白を SystemBarPadding で計算。Android 11 エミュレータで確認）
+- [x] 予測型「戻る」ジェスチャーの動作確認（AndroidManifestの enableOnBackInvokedCallback）（マニフェストで有効化。Android 13 以降の実機での確認は No.35）
+- [x] 大画面（幅600dp以上）で画面の向き・サイズ固定が無視される変更への対応確認（画面の向き・サイズを固定していないため対応不要）
 - [ ] Android 14〜16 の動作変更の確認（フォアグラウンドサービス、通知、メディア権限）
 - [ ] API 36 環境での動作確認（このPCでは64bitエミュレータが動かないため、実機または別環境で → No.35）
 
 ### No.32 ビルド環境の整備（No.31の前提）
-- [ ] Android Gradle Plugin を 8.2.2 から API 36 対応版へ更新（Android Studioの Upgrade Assistant は 8.13.2 / Gradle 8.13 を提示）
-- [ ] gradle-wrapper.jar を生成してコミットし、CIを ./gradlew 実行に切り替え
-- [ ] 古い依存ライブラリの更新（lint の GradleDependency 警告19件。Media3・AndroidX・Material など）
-- [ ] JDKのバージョンを固定（Gradle の toolchain 設定、または README に JDK 17 を明記）
+- [x] Android Gradle Plugin を 8.2.2 から API 36 対応版へ更新（Android Studioの Upgrade Assistant は 8.13.2 / Gradle 8.13 を提示）→ AGP 8.13.2 / Gradle 8.13 に更新済み
+- [x] gradle-wrapper.jar を生成してコミットし、CIを ./gradlew 実行に切り替え
+- [x] 古い依存ライブラリの更新（lint の GradleDependency 警告19件。Media3・AndroidX・Material など）
+- [x] JDKのバージョンを固定（Gradle の toolchain 設定、または README に JDK 17 を明記）→ gradle/gradle-daemon-jvm.properties で JDK 17 を指定
 
 ### No.33 DBの移行の仕組み
-- [ ] Room の exportSchema を有効にし、スキーマJSONをリポジトリで管理
-- [ ] 次回以降のスキーマ変更で Migration を書く運用を README に明記（fallbackToDestructiveMigration は使わない）
-- [ ] 移行テストの土台（MigrationTestHelper を使った androidTest）
+- [x] Room の exportSchema を有効にし、スキーマJSONをリポジトリで管理
+- [x] 次回以降のスキーマ変更で Migration を書く運用を README に明記（fallbackToDestructiveMigration は使わない）
+- [x] 移行テストの土台（MigrationTestHelper を使った androidTest）→ MigrationTest（エミュレータで成功を確認）
 
 ### No.34 リリースビルド
 - [ ] アップロード鍵（keystore）の作成と安全な保管（リポジトリには入れない）
-- [ ] signingConfig の設定（鍵情報は local.properties または CI のシークレットから読む）
-- [ ] R8（minifyEnabled）とリソース縮小（shrinkResources）を有効化し、Glide・Room・Hilt・Media3 の ProGuard ルールを確認
-- [ ] リリースビルドでの動作確認（縮小で壊れていないか）
-- [ ] versionCode／versionName の運用ルール決め
+- [x] signingConfig の設定（鍵情報は local.properties または CI のシークレットから読む）
+- [x] R8（minifyEnabled）とリソース縮小（shrinkResources）を有効化し、Glide・Room・Hilt・Media3 の ProGuard ルールを確認
+- [x] リリースビルドでの動作確認（縮小で壊れていないか）（一時的なテスト鍵で署名し、エミュレータで再生・サムネイル・イコライザーを確認）
+- [x] versionCode／versionName の運用ルール決め→ versionName は x.y.z、versionCode = x×10000 + y×100 + z（BuildConfigSpecTest で検査）
 - [ ] AAB（bundleRelease）の作成と Play App Signing の設定
 
 ### No.35 実機での動作確認（Android 13以降）
@@ -228,9 +228,9 @@ No.31以降はリリースに向けたタスク（2026-10-19 のレビューで�
 - [ ] 確認結果をチェックリストとして doc に残す
 
 ### No.36 ストア掲載・ポリシー対応
-- [ ] ストア用素材：512×512 アイコン、1024×500 フィーチャーグラフィック、スクリーンショット（日本語・英語）
-- [ ] ストア掲載文（アプリ名・短い説明・詳しい説明、日本語・英語）
-- [ ] プライバシーポリシーを公開URLに掲載（アプリ内の文面と一致させる）
+- [x] ストア用素材：512×512 アイコン、1024×500 フィーチャーグラフィック、スクリーンショット（日本語・英語）→ doc/store/（アイコン、フィーチャー グラフィック、スクリーンショット日英各5枚）
+- [x] ストア掲載文（アプリ名・短い説明・詳しい説明、日本語・英語）→ doc/store/listing.md
+- [ ] プライバシーポリシーを公開URLに掲載（アプリ内の文面と一致させる）※公開用ページ doc/privacy-policy.md は作成済み。GitHub Pages 等での公開が必要
 - [ ] データセーフティの申告（データの収集・共有なし、マイクは録音機能のみで使用）
 - [ ] コンテンツのレーティング、対象年齢の設定
 - [ ] テスト配信（内部テスト → クローズドテスト）。個人の開発者アカウントの場合、製品版公開の前にクローズドテストの条件（テスター人数・期間）を満たす必要があるため、最新の条件を Play Console で確認
@@ -238,53 +238,57 @@ No.31以降はリリースに向けたタスク（2026-10-19 のレビューで�
 ## リリース準備：推奨
 
 ### No.37 英語表示での日本語の混在をなくす
-- [ ] 曲数の表示を複数形リソース（plurals）に（AlbumsFragment・ArtistsFragment・FoldersFragment・FolderCheckAdapter）
-- [ ] お気に入りメニューの文言を文字列リソースに（SongMenuHelper）
-- [ ] スリープタイマーの「15分／30分／60分」を文字列リソースに（dialog_playback_settings.xml）
-- [ ] lint の HardcodedText 警告（5件）の解消
+- [x] 曲数の表示を複数形リソース（plurals）に（AlbumsFragment・ArtistsFragment・FoldersFragment・FolderCheckAdapter）
+- [x] お気に入りメニューの文言を文字列リソースに（SongMenuHelper）
+- [x] スリープタイマーの「15分／30分／60分」を文字列リソースに（dialog_playback_settings.xml）
+- [x] lint の HardcodedText 警告（5件）の解消
 
 ### No.38 プレイヤー画面の見た目の整理
-- [ ] プレイヤー画面を開いている間はミニプレイヤーを隠す
-- [ ] 「戻る」ボタンのアイコンを戻る矢印に変更（現在は「前の曲」アイコン ic_previous を6画面で流用）
+- [x] プレイヤー画面を開いている間はミニプレイヤーを隠す
+- [x] 「戻る」ボタンのアイコンを戻る矢印に変更（現在は「前の曲」アイコン ic_previous を6画面で流用）
 
 ### No.39 再生設定・再生位置の保持
-- [ ] 再生速度・リピート設定を保存し、起動時に復元
-- [ ] 最後に再生していた曲・再生位置・キューの復元（Media3 の再生再開の仕組みを利用）
-- [ ] 保存・復元ロジックの単体テスト
+- [x] 再生速度・リピート設定を保存し、起動時に復元
+- [x] 最後に再生していた曲・再生位置・キューの復元（Media3 の再生再開の仕組みを利用）
+- [x] 保存・復元ロジックの単体テスト
 
 ### No.40 TalkBack 対応
-- [ ] 操作できるボタンの contentDescription を設定（戻る・メニュー・すべて再生ボタンなど、現在 @null のもの）
+- [x] 操作できるボタンの contentDescription を設定（AccessibilitySpecTest で検査）（戻る・メニュー・すべて再生ボタンなど、現在 @null のもの）
 - [ ] TalkBack を有効にした状態で主要な操作を一通り確認
 
 ### No.41 Android 10以降での歌詞表示
-- [ ] .lrc ファイルをファイルパスではなく MediaStore またはフォルダのアクセス許可（SAF）経由で読む
-- [ ] MP3に埋め込まれた歌詞（ID3のUSLT）の読み込みも検討
-- [ ] LyricsParser の単体テスト追加
+- [x] .lrc ファイルをファイルパスではなく MediaStore またはフォルダのアクセス許可（SAF）経由で読む（埋め込み歌詞を最優先に、設定で選んだ歌詞フォルダ（SAF）→ 直接パスの順。フォルダ選択画面の操作はエミュレータで自動化できず未確認 → No.35）
+- [x] MP3に埋め込まれた歌詞（ID3のUSLT）の読み込みも検討→ 実装済み（Id3LyricsReader）
+- [x] LyricsParser の単体テスト追加
 
 ### No.42 クラッシュ・フリーズの把握
-- [ ] Play Console の Android vitals（クラッシュ・ANR）を定期的に確認する手順を決める
+- [x] Play Console の Android vitals（クラッシュ・ANR）を定期的に確認する手順を決める（play-store-release.md の手順9）
 - 備考: プライバシーポリシーで「外部送信なし」としているため、外部のクラッシュ収集SDKは入れない
 
 ### No.43 再生サービスの操作制限
-- [ ] onConnect で、イコライザー等の独自コマンドを自アプリからの接続にだけ許可する
-- [ ] lint の ExportedService 警告の確認
+- [x] onConnect で、イコライザー等の独自コマンドを自アプリからの接続にだけ許可する
+- [x] lint の ExportedService 警告の確認
 
 ## リリース準備：任意
 
 ### No.44 再生速度のプリセット
-- [ ] 速度の数値をタップしたときに 0.5／1.0／1.5／2.0／3.0／4.0 倍の候補を表示
+- [x] 速度の数値をタップしたときに 0.5／1.0／1.5／2.0／3.0／4.0 倍の候補を表示
 
 ### No.45 プレイヤー画面のシャッフル表示
-- [ ] プレイヤー画面にシャッフルボタンを追加し、状態を表示・切り替え
+- [x] プレイヤー画面にシャッフルボタンを追加し、状態を表示・切り替え
 
 ### No.46 スキャン進捗の表示
-- [ ] スキャン中のプログレス表示（No.11の残タスク）
+- [x] スキャン中のプログレス表示（No.11の残タスク）（曲数が少ないエミュレータでは表示の瞬間を確認できず → No.35）
 
 ### No.47 バッテリー最適化の案内
-- [ ] バッテリー最適化の除外を案内するダイアログ（No.7の残タスク）
+- [x] バッテリー最適化の除外を案内するダイアログ（No.7の残タスク）
 
 ### No.48 アイコン表示の対象拡大
-- [ ] プレイリスト詳細（ドラッグ並び替えとの両立）と履歴（2セクション表示との両立）にもアイコン表示を追加
+- [x] プレイリスト詳細（ドラッグ並び替えとの両立）と履歴（2セクション表示との両立）にもアイコン表示を追加（グリッドではドラッグを4方向にし、スワイプ削除はリスト表示のみ。履歴は見出しを1行全体に表示）
 
 ### その他（lint 警告）
-- [ ] Overdraw（16件）、UnusedResources（5件）、NotifyDataSetChanged（4件）などの整理
+- [x] lint エラー0件。未使用リソース・ハードコード文字列・複数形候補・不要なSDK判定などを整理
+- [ ] 残りの警告（ライブラリの新しい版の通知、Overdraw など計46件）は、必要に応じて対応
+
+### 追加の不具合修正（2026-10-19）
+- [x] 表示言語を選んでも、アプリを再起動するまで反映されなかった（AppLanguage、単体テスト3件）

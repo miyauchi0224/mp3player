@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mp3player.app.R;
 import com.mp3player.app.data.local.entity.Song;
 
-public class SongAdapter extends ListAdapter<Song, SongAdapter.SongViewHolder> {
+public class SongAdapter extends ListAdapter<Song, SongAdapter.SongViewHolder> implements ViewModeAdapter {
 
     public interface Listener {
         void onSongClick(Song song, int position);
@@ -30,6 +30,9 @@ public class SongAdapter extends ListAdapter<Song, SongAdapter.SongViewHolder> {
     }
 
     /** リスト表示／アイコン表示を切り替える。LayoutManagerの切り替えは SongListLayout が行う */
+    // 表示方法が変わると全項目のレイアウト（ViewType）が変わるため、一覧全体を更新する
+    @android.annotation.SuppressLint("NotifyDataSetChanged")
+    @Override
     public void setViewMode(SongViewMode mode) {
         if (viewMode == mode) return;
         viewMode = mode;

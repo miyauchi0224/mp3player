@@ -14,7 +14,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import com.mp3player.app.ui.common.ListGestures;
+import com.mp3player.app.ui.common.SongListLayout;
+import com.mp3player.app.ui.common.SongViewMode;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -28,6 +30,9 @@ import com.mp3player.app.databinding.FragmentSongListBinding;
 
 @AndroidEntryPoint
 public class PlaylistDetailFragment extends Fragment {
+
+    @javax.inject.Inject
+    com.mp3player.app.data.UserPreferences userPreferences;
 
     private FragmentSongListBinding binding;
     private PlaylistDetailViewModel viewModel;
@@ -61,8 +66,12 @@ public class PlaylistDetailFragment extends Fragment {
         binding.fabPlayAll.setVisibility(View.VISIBLE);
 
         adapter = new PlaylistSongAdapter((song, position) -> viewModel.playFrom(adapter.getCurrentList(), position));
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
+        binding.buttonViewMode.setVisibility(View.VISIBLE);
+        binding.buttonViewMode.setOnClickListener(v ->
+                userPreferences.setSongViewMode(userPreferences.getSongViewMode().getValue().toggle()));
+        userPreferences.getSongViewMode().observe(getViewLifecycleOwner(), mode ->
+                SongListLayout.apply(binding.recyclerView, adapter, mode, binding.buttonViewMode));
 
         binding.fabPlayAll.setOnClickListener(v -> {
             List<Song> songs = adapter.getCurrentList();
@@ -71,8 +80,14 @@ public class PlaylistDetailFragment extends Fragment {
             }
         });
 
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, 0) {
+            // 表示方法によって並べ替え・削除の方向を変える（グリッドではスワイプ削除なし）
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                SongViewMode mode = userPreferences.getSongViewMode().getValue();
+                return makeMovementFlags(ListGestures.dragDirections(mode), ListGestures.swipeDirections(mode));
+            }
+
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
                                    @NonNull RecyclerView.ViewHolder target) {

@@ -28,7 +28,6 @@
     <string name="action_settings">Playback settings</string>
     <string name="action_equalizer">Equalizer</string>
     <string name="action_lyrics">Lyrics</string>
-    <string name="action_sleep_timer">Sleep timer</string>
     <string name="action_edit_tags">Edit tags</string>
 
     <string name="playlist_create">New playlist</string>
@@ -37,9 +36,6 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="menu_rename">Rename</string>
     <string name="menu_delete">Delete</string>
-
-    <string name="permission_required_message">Access to your music files is required to show songs.</string>
-    <string name="permission_grant">Grant</string>
 
     <string name="sort_title">By title</string>
     <string name="sort_artist">By artist</string>
@@ -50,14 +46,12 @@
     <string name="speed_label">Playback speed</string>
     <string name="action_speed_down">Decrease playback speed</string>
     <string name="action_speed_up">Increase playback speed</string>
-    <string name="action_speed_reset">Reset playback speed to 1.0x</string>
+    <string name="action_speed_reset">Choose playback speed</string>
 
     <string name="equalizer_title">Equalizer</string>
-    <string name="equalizer_enable">Enable equalizer</string>
     <string name="equalizer_preset">Preset</string>
 
     <string name="lyrics_empty">No lyrics found</string>
-    <string name="lyrics_show">Show lyrics</string>
 
     <string name="sleep_timer_title">Sleep timer</string>
     <string name="sleep_timer_off">Off</string>
@@ -101,13 +95,16 @@
     <string name="cloud_import_title">Import from cloud</string>
     <string name="cloud_import_description">Pick mp3 files from a cloud storage app such as Google Drive to import them.</string>
     <string name="cloud_import_select">Select files</string>
-    <string name="cloud_import_success">Imported %1$d file(s)</string>
+    <plurals name="cloud_import_success">
+        <item quantity="one">Imported %1$d file</item>
+        <item quantity="other">Imported %1$d files</item>
+    </plurals>
 
     <string name="history_recent">Recently played</string>
     <string name="history_most_played">Most played</string>
     <string name="history_clear_confirm">Clear all playback history (recently played and play counts)?</string>
 
-    <string name="privacy_policy_body">This app stores playback history, favorites, and playlists only in a local database on your device, and never sends this data to any external server. Access to your music files is used solely to search and play MP3 files on your device. Microphone access is used only when you use the voice recording feature.</string>
+    <string name="privacy_policy_body">This app stores playback history, favorites, and playlists only in a local database on your device, and never sends this data to any external server. Access to your music files is used solely to search and play MP3 files on your device. Microphone access is used only when you use the voice recording feature. If you choose a lyrics folder in Settings, it is used only to read lyrics files (.lrc) in that folder.</string>
     <string name="license_body">This app uses the following open source software.\n\n- AndroidX (Apache License 2.0)\n- Material Components for Android (Apache License 2.0)\n- Media3 (Apache License 2.0)\n- Room (Apache License 2.0)\n- Hilt / Dagger (Apache License 2.0)\n- Glide (BSD, part MIT, part Apache 2.0)</string>
     <string name="play_mode_shuffle">Shuffle</string>
     <string name="play_mode_repeat_one">Repeat one</string>
@@ -116,4 +113,27 @@
     <string name="play_mode_repeat_artist">Repeat artist</string>
     <string name="action_view_mode_grid">Switch to icon view</string>
     <string name="action_view_mode_list">Switch to list view</string>
+    <plurals name="song_count">
+        <item quantity="one">%d song</item>
+        <item quantity="other">%d songs</item>
+    </plurals>
+    <string name="folder_subtitle">%1$s · %2$s</string>
+    <string name="favorite_add">Add to favorites</string>
+    <string name="favorite_remove">Remove from favorites</string>
+    <string name="sleep_timer_15">15 min</string>
+    <string name="sleep_timer_30">30 min</string>
+    <string name="sleep_timer_60">60 min</string>
+    <string name="action_back">Navigate up</string>
+    <string name="action_more">More options</string>
+    <string name="action_play_all">Play all</string>
+    <string name="action_clear_history">Clear playback history</string>
+    <string name="settings_lyrics_folder">Lyrics folder</string>
+    <string name="settings_lyrics_folder_none">Not set (embedded lyrics only)</string>
+    <string name="action_shuffle">Toggle shuffle</string>
+    <string name="battery_prompt_title">About background playback</string>
+    <string name="battery_prompt_message">On some devices, battery saving may stop playback while the screen is off. If that happens, turn off battery optimization for this app in Settings.</string>
+    <string name="battery_prompt_open_settings">Open settings</string>
+    <string name="battery_prompt_later">Not now</string>
+    <string name="scan_progress_starting">Loading songs…</string>
+    <string name="scan_progress">Loading songs… %1$d / %2$d</string>
 </resources>

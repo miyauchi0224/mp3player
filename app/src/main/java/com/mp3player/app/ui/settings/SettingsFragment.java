@@ -55,6 +55,19 @@ public class SettingsFragment extends Fragment {
                 }
             });
 
+    private final ActivityResultLauncher<android.net.Uri> lyricsFolderLauncher =
+            registerForActivityResult(new ActivityResultContracts.OpenDocumentTree(), uri -> {
+                if (uri == null) {
+                    return;
+                }
+                // 再起動後も読めるよう、許可を保持する
+                requireContext().getContentResolver().takePersistableUriPermission(
+                        uri, android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                userPreferences.setLyricsFolder(uri.toString());
+                com.mp3player.app.ui.player.LyricsLoader.invalidateFolderIndex();
+                setupLyricsFolderRow();
+            });
+
     private final ActivityResultLauncher<String[]> importLauncher =
             registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
                 if (uri != null) {
@@ -78,6 +91,7 @@ public class SettingsFragment extends Fragment {
         setupRow(binding.rowLanguage, R.string.settings_language, currentLanguageLabel(), this::showLanguageDialog);
         setupRow(binding.rowTargetFolders, R.string.settings_target_folders, "",
                 () -> Navigation.findNavController(view).navigate(R.id.folderFilterFragment));
+        setupLyricsFolderRow();
         setupRow(binding.rowExportPlaylist, R.string.settings_export_playlist, "", this::showExportPlaylistDialog);
         setupRow(binding.rowImportPlaylist, R.string.settings_import_playlist, "",
                 () -> importLauncher.launch(new String[]{"audio/x-mpegurl", "audio/mpegurl", "application/octet-stream"}));
@@ -92,6 +106,15 @@ public class SettingsFragment extends Fragment {
 
         playlistRepository.getAllPlaylists().observe(getViewLifecycleOwner(), playlists ->
                 currentPlaylists = playlists != null ? playlists : new java.util.ArrayList<>());
+    }
+
+    private void setupLyricsFolderRow() {
+        String folder = userPreferences.getLyricsFolder();
+        String label = folder == null
+                ? getString(R.string.settings_lyrics_folder_none)
+                : TreeFolderLabel.of(android.provider.DocumentsContract.getTreeDocumentId(android.net.Uri.parse(folder)));
+        setupRow(binding.rowLyricsFolder, R.string.settings_lyrics_folder, label,
+                () -> lyricsFolderLauncher.launch(null));
     }
 
     private void setupRow(com.mp3player.app.databinding.ItemSettingRowBinding row, int titleRes,
@@ -123,9 +146,9 @@ public class SettingsFragment extends Fragment {
     private String currentLanguageLabel() {
         switch (userPreferences.getLanguage()) {
             case UserPreferences.LANGUAGE_JA:
-                return "日本語";
+                return getString(R.string.language_name_ja);
             case UserPreferences.LANGUAGE_EN:
-                return "English";
+                return getString(R.string.language_name_en);
             default:
                 return getString(R.string.settings_language_system);
         }
@@ -168,11 +191,18 @@ public class SettingsFragment extends Fragment {
     }
 
     private void showLanguageDialog() {
-        String[] labels = {getString(R.string.settings_language_system), "日本語", "English"};
+        String[] labels = {getString(R.string.settings_language_system),
+                getString(R.string.language_name_ja), getString(R.string.language_name_en)};
         String[] values = {UserPreferences.LANGUAGE_SYSTEM, UserPreferences.LANGUAGE_JA, UserPreferences.LANGUAGE_EN};
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.settings_language)
-                .setItems(labels, (dialog, which) -> userPreferences.setLanguage(values[which]))
+                .setItems(labels, (dialog, which) -> {
+                    userPreferences.setLanguage(values[which]);
+                    // その場で反映する（画面は自動で作り直され、表示も新しい言語になる）
+                    androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(
+                            androidx.core.os.LocaleListCompat.forLanguageTags(
+                                    com.mp3player.app.data.AppLanguage.languageTags(values[which])));
+                })
                 .show();
     }
 

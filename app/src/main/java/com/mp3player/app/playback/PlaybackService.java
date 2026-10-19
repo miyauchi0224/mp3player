@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.media.audiofx.Equalizer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,7 @@ import androidx.annotation.Nullable;
 import android.content.ContentUris;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
@@ -23,6 +26,7 @@ import androidx.media3.session.MediaLibraryService;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.SessionCommand;
 import androidx.media3.session.SessionCommands;
+import androidx.media3.session.SessionError;
 import androidx.media3.session.SessionResult;
 
 import com.google.common.collect.ImmutableList;
@@ -33,6 +37,8 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -75,25 +81,108 @@ public class PlaybackService extends MediaLibraryService {
     private ExoPlayer player;
     private MediaLibrarySession mediaSession;
     private Equalizer equalizer;
+    private PlaybackStateStore stateStore;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onCreate() {
         super.onCreate();
         listeningExecutor = MoreExecutors.listeningDecorator(executorService);
         player = new ExoPlayer.Builder(this).build();
+        stateStore = new PlaybackStateStore(this);
         mediaSession = new MediaLibrarySession.Builder(this, player, new LibrarySessionCallback())
                 .build();
         player.addListener(new Player.Listener() {
             @Override
             public void onIsPlayingChanged(boolean isPlaying) {
                 updateWidget();
+                saveState();
             }
 
             @Override
             public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
                 updateWidget();
+                saveState();
+            }
+
+            @Override
+            public void onPlaybackParametersChanged(@NonNull PlaybackParameters playbackParameters) {
+                saveState();
+            }
+
+            @Override
+            public void onRepeatModeChanged(int repeatMode) {
+                saveState();
             }
         });
+        restoreState();
+    }
+
+    /** 再生状態を保存する（次回起動時に復元するため） */
+    private void saveState() {
+        if (player == null) {
+            return;
+        }
+        List<Long> ids = new ArrayList<>();
+        for (int i = 0; i < player.getMediaItemCount(); i++) {
+            try {
+                ids.add(Long.parseLong(player.getMediaItemAt(i).mediaId));
+            } catch (NumberFormatException ignored) {
+                // 曲以外のIDは保存しない
+            }
+        }
+        stateStore.save(new PlaybackSnapshot(ids, player.getCurrentMediaItemIndex(),
+                player.getCurrentPosition(), player.getPlaybackParameters().speed, player.getRepeatMode()));
+    }
+
+    /** 保存した再生状態を読み、今ある曲だけで一時停止状態に戻す */
+    // DBを読むため、バックグラウンドスレッドから呼ぶ
+    @Nullable
+    private PlaybackSnapshot.Restored computeRestoredState() {
+        Set<Long> existing = new HashSet<>();
+        for (Song song : songDao.getAllSongsSync()) {
+            existing.add(song.id);
+        }
+        return PlaybackRestorer.restore(stateStore.load(), existing);
+    }
+
+    private List<MediaItem> toMediaItems(List<Long> songIds) {
+        List<MediaItem> items = new ArrayList<>();
+        for (long id : songIds) {
+            Song song = songDao.getSongByIdSync(id);
+            if (song != null) {
+                items.add(songToMediaItem(song));
+            }
+        }
+        return items;
+    }
+
+    private void restoreState() {
+        listeningExecutor.execute(() -> {
+            PlaybackSnapshot.Restored restored = computeRestoredState();
+            if (restored == null) {
+                return;
+            }
+            List<MediaItem> items = toMediaItems(restored.songIds);
+            mainHandler.post(() -> {
+                if (player == null) {
+                    return;
+                }
+                player.setPlaybackParameters(new PlaybackParameters(restored.speed));
+                player.setRepeatMode(restored.repeatMode);
+                // 起動直後に別の曲の再生が始まっていたら、そちらを優先する
+                if (player.getMediaItemCount() == 0 && !items.isEmpty()) {
+                    player.setMediaItems(items, restored.index, restored.positionMs);
+                    player.prepare();
+                }
+            });
+        });
+    }
+
+    @Override
+    public void onTaskRemoved(@Nullable Intent rootIntent) {
+        saveState();
+        super.onTaskRemoved(rootIntent);
     }
 
     private void updateWidget() {
@@ -137,6 +226,7 @@ public class PlaybackService extends MediaLibraryService {
 
     @Override
     public void onDestroy() {
+        saveState();
         if (equalizer != null) {
             equalizer.release();
             equalizer = null;
@@ -240,6 +330,10 @@ public class PlaybackService extends MediaLibraryService {
                                                          @NonNull MediaSession.ControllerInfo controller) {
             MediaSession.ConnectionResult defaultResult =
                     MediaLibrarySession.Callback.super.onConnect(session, controller);
+            if (!CustomCommandPolicy.isAllowed(controller.getPackageName(), getPackageName())) {
+                // 他アプリ（通知・Android Auto 等）には通常の再生操作だけを許可する
+                return defaultResult;
+            }
             SessionCommands sessionCommands = defaultResult.availableSessionCommands.buildUpon()
                     .add(new SessionCommand(CMD_EQ_GET_STATE, Bundle.EMPTY))
                     .add(new SessionCommand(CMD_EQ_SET_ENABLED, Bundle.EMPTY))
@@ -252,12 +346,30 @@ public class PlaybackService extends MediaLibraryService {
                     .build();
         }
 
+        /** 通知・ロック画面などからの「前回の再生を再開」（Android 13以降） */
+        @NonNull
+        @Override
+        public ListenableFuture<MediaSession.MediaItemsWithStartPosition> onPlaybackResumption(
+                @NonNull MediaSession session, @NonNull MediaSession.ControllerInfo controller) {
+            return listeningExecutor.submit(() -> {
+                PlaybackSnapshot.Restored restored = computeRestoredState();
+                if (restored == null || restored.songIds.isEmpty()) {
+                    return new MediaSession.MediaItemsWithStartPosition(Collections.emptyList(), 0, 0);
+                }
+                return new MediaSession.MediaItemsWithStartPosition(
+                        toMediaItems(restored.songIds), restored.index, restored.positionMs);
+            });
+        }
+
         @NonNull
         @Override
         public ListenableFuture<SessionResult> onCustomCommand(@NonNull MediaSession session,
                                                                  @NonNull MediaSession.ControllerInfo controller,
                                                                  @NonNull SessionCommand customCommand,
                                                                  @NonNull Bundle args) {
+            if (!CustomCommandPolicy.isAllowed(controller.getPackageName(), getPackageName())) {
+                return Futures.immediateFuture(new SessionResult(SessionError.ERROR_PERMISSION_DENIED));
+            }
             switch (customCommand.customAction) {
                 case CMD_EQ_GET_STATE:
                     return Futures.immediateFuture(new SessionResult(SessionResult.RESULT_SUCCESS, buildEqStateBundle()));
@@ -283,7 +395,7 @@ public class PlaybackService extends MediaLibraryService {
                     return Futures.immediateFuture(new SessionResult(SessionResult.RESULT_SUCCESS, buildEqStateBundle()));
                 }
                 default:
-                    return Futures.immediateFuture(new SessionResult(SessionResult.RESULT_ERROR_NOT_SUPPORTED));
+                    return Futures.immediateFuture(new SessionResult(SessionError.ERROR_NOT_SUPPORTED));
             }
         }
 

@@ -46,6 +46,8 @@ public class PlayerController {
 
     private final Context context;
     private MediaController mediaController;
+    /** シャッフル中のときだけ、シャッフル前のキュー。null ならシャッフルしていない */
+    private List<MediaItem> shuffledOriginal;
     private final MutableLiveData<PlaybackUiState> state = new MutableLiveData<>(new PlaybackUiState());
     private final List<Runnable> pendingActions = new ArrayList<>();
     private TrackStartedListener trackStartedListener;
@@ -131,6 +133,7 @@ public class PlayerController {
 
     public void playQueue(List<Song> songs, int startIndex) {
         runOrQueue(() -> {
+            shuffledOriginal = null;
             // 直前のシャッフル再生の設定が、通常の再生に引き継がれないようにする
             mediaController.setShuffleModeEnabled(false);
             startQueue(songs, startIndex);
@@ -143,15 +146,67 @@ public class PlayerController {
             // シャッフルは PlayPlan の再生順で表現するので、プレーヤーのシャッフルは使わない
             mediaController.setShuffleModeEnabled(false);
             mediaController.setRepeatMode(plan.repeatMode);
+            // シャッフル再生なら、元の並びを覚えておき、プレイヤー画面から元に戻せるようにする
+            shuffledOriginal = isListOrder(plan.order) ? null : toMediaItems(songs);
             startQueue(plan.applyTo(songs), 0);
         });
     }
 
-    private void startQueue(List<Song> songs, int startIndex) {
+    private static boolean isListOrder(List<Integer> order) {
+        for (int i = 0; i < order.size(); i++) {
+            if (order.get(i) != i) return false;
+        }
+        return true;
+    }
+
+    private List<MediaItem> toMediaItems(List<Song> songs) {
         List<MediaItem> items = new ArrayList<>();
         for (Song song : songs) {
             items.add(toMediaItem(song));
         }
+        return items;
+    }
+
+    /** プレイヤー画面のシャッフル切り替え。再生中の曲は止めずに、前後のキューだけを入れ替える */
+    public void toggleShuffle() {
+        runOrQueue(() -> {
+            int count = mediaController.getMediaItemCount();
+            int current = mediaController.getCurrentMediaItemIndex();
+            if (count == 0 || current < 0) {
+                return;
+            }
+            List<MediaItem> queue = new ArrayList<>();
+            for (int i = 0; i < count; i++) {
+                queue.add(mediaController.getMediaItemAt(i));
+            }
+            List<MediaItem> newQueue;
+            int newIndex;
+            if (shuffledOriginal == null) {
+                newQueue = QueueShuffler.shuffleAroundCurrent(queue, current, new java.util.Random());
+                newIndex = 0;
+                shuffledOriginal = queue;
+            } else {
+                List<String> originalIds = new ArrayList<>();
+                for (MediaItem item : shuffledOriginal) originalIds.add(item.mediaId);
+                QueueShuffler.Restored<String> restored =
+                        QueueShuffler.restoreOriginal(originalIds, queue.get(current).mediaId);
+                newQueue = shuffledOriginal;
+                newIndex = restored.currentIndex;
+                shuffledOriginal = null;
+            }
+            // 再生中の曲以外を取り除き、新しい並びの前後を足す（再生は途切れない）
+            if (current + 1 < count) mediaController.removeMediaItems(current + 1, count);
+            if (current > 0) mediaController.removeMediaItems(0, current);
+            if (newIndex > 0) mediaController.addMediaItems(0, newQueue.subList(0, newIndex));
+            if (newIndex + 1 < newQueue.size()) {
+                mediaController.addMediaItems(newIndex + 1, newQueue.subList(newIndex + 1, newQueue.size()));
+            }
+            updateState();
+        });
+    }
+
+    private void startQueue(List<Song> songs, int startIndex) {
+        List<MediaItem> items = toMediaItems(songs);
         mediaController.setMediaItems(items, startIndex, 0);
         mediaController.prepare();
         mediaController.play();
@@ -314,6 +369,7 @@ public class PlayerController {
         s.isPlaying = mediaController.isPlaying();
         s.duration = Math.max(mediaController.getDuration(), 0);
         s.repeatMode = mediaController.getRepeatMode();
+        s.shuffled = shuffledOriginal != null;
         s.volume = mediaController.getVolume();
         s.speed = mediaController.getPlaybackParameters().speed;
         s.sleepTimerActive = isSleepTimerActive();

@@ -83,20 +83,49 @@ Android Studioで開けるプロジェクトとして、README記載の機能を
 - [x] 音声録音、クラウド（SAF経由）読み込み
 - [x] ホーム画面ウィジェット、Android Auto対応（MediaLibraryService）
 - [x] ダークモード切替、多言語対応（日本語／英語）、プライバシーポリシー・ライセンス画面
+- [x] アルバム／フォルダ単位のシャッフル・リピート、リスト／アイコン表示の切り替え、MP3埋め込みサムネイル・歌詞の表示
+- [x] 再生速度0.5〜4倍（候補から選択）、プレイヤー画面のシャッフル、再生状態・設定の次回起動時の復元
+- [x] Android 16（API 36）対応（edge-to-edge）、署名付きリリースビルド（R8）、DBの移行テスト、TalkBack対応
 
 ### 実装上の既知の制約
 
 - **録音ファイルはMP3ではなくAAC(.m4a)**: AndroidのMediaRecorderはMP3エンコード出力に対応していないため。
 - **タグ編集はMediaStoreのメタデータ更新のみ**: 曲ファイル内のID3バイナリタグ自体は書き換えない。
 - **クラウド読み込みはSAFドキュメントピッカー経由**: Google Drive専用SDK/OAuth連携ではなく、端末にインストールされたクラウドアプリ（Drive等）をシステム標準の選択画面から選ぶ方式。
-- **歌詞表示はscoped storage環境で読めない場合がある**: 同名.lrcファイルをファイルパスから直接読み込むため、Android 10以降で端末によっては非表示になることがある。
+- **歌詞の .lrc ファイルは、Android 10以降では設定の「歌詞フォルダ」で選んだフォルダから読む**: MP3に埋め込まれた歌詞（ID3 の USLT）は許可なしで表示できる。
 - **Android Auto・イコライザーはMedia3の比較的新しいAPI（MediaLibraryService／カスタムセッションコマンド）を使用**しており、実機・実行環境での検証ができていないため、Android Studioでのビルド時に細部の修正が必要になる可能性が他の画面より高い。
-- **Gradle Wrapperのjarは同梱していない**（バイナリファイルのため生成不可）。Android Studioで開くと自動生成されるほか、ローカルにGradleがあれば`gradle wrapper`で生成できる。CIはラッパー無しで動くようGradle本体をセットアップする構成にしている。
+
+## ビルド方法
+
+コマンドラインでは Gradle Wrapper を使う（Gradle 8.13 / Android Gradle Plugin 8.13）。
+
+```sh
+./gradlew test assembleDebug
+```
+
+## 開発ルール
+
+### テスト
+
+- 開発スタイルはTDD（機能単位で、失敗するテスト → 実装 → テスト成功）。
+- 単体テスト: `./gradlew testDebugUnitTest`（`app/src/test`）
+- 端末・エミュレータでのテスト: `./gradlew connectedDebugAndroidTest`（`app/src/androidTest`）。結果の受け取りに失敗する場合は、`./gradlew installDebug installDebugAndroidTest` のあと `adb shell am instrument -w com.mp3player.app.test/androidx.test.runner.AndroidJUnitRunner` で直接実行する。
+
+### DBのスキーマを変えるとき
+
+公開後のアップデートでお気に入り・プレイリスト・履歴を失わないため、次の手順を守る。`fallbackToDestructiveMigration` は使わない。
+
+1. エンティティを変更し、`AppDatabase.VERSION` を1つ上げる
+2. 1つ前のバージョンからの `Migration` を書き、`AppDatabase.MIGRATIONS` に追加する
+3. ビルドすると `app/schemas/` に新しいスキーマJSONが出力されるので、コミットする
+4. `MigrationTest`（androidTest）を実行し、移行後もデータが残ることを確認する
+
+`DatabaseSchemaSpecTest`（単体テスト）が、スキーマJSONと Migration の書き忘れを検出する。
 
 ## Android Studioで開く
 
 1. Android Studio（Hedgehog以降推奨）で本フォルダを開く
-2. 初回はGradle Wrapperが無いため、Android Studioの同期プロンプトに従うか、ローカルにGradleがある場合は `gradle wrapper` を実行してWrapperを生成する
+2. ビルドには **JDK 17** を使う。`gradle/gradle-daemon-jvm.properties` で JDK 17 を指定しているため、Android Studio の Gradle JDK 設定に関わらず JDK 17 で動く（JDK 17 がインストールされている必要がある）
 3. Gradle Sync完了後、実機またはエミュレータ（API 24以上）でRun
 4. 初回起動時に音楽ファイル・通知へのアクセス許可を求められるので許可すると、端末内のMP3が自動スキャンされる
 

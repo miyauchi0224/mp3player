@@ -54,6 +54,31 @@
         android:layout_height="wrap_content"
         app:tabMode="fixed" />
 
+    <!-- 曲のスキャン中だけ表示する -->
+    <LinearLayout
+        android:id="@+id/scan_progress_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="4dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/text_scan_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress_scan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"

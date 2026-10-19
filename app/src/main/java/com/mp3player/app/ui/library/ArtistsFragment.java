@@ -57,7 +57,7 @@ public class ArtistsFragment extends Fragment {
             if (artists != null) {
                 for (ArtistSummary artist : artists) {
                     items.add(new GroupItem("artist:" + artist.artist, artist.artist,
-                            artist.songCount + "曲", artist));
+                            getResources().getQuantityString(R.plurals.song_count, artist.songCount, artist.songCount), artist));
                 }
             }
             adapter.submitList(items);

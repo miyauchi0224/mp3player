@@ -57,7 +57,7 @@ public class AlbumsFragment extends Fragment {
             if (albums != null) {
                 for (AlbumSummary album : albums) {
                     items.add(new GroupItem("album:" + album.albumId, album.album,
-                            album.songCount + "曲", album));
+                            getResources().getQuantityString(R.plurals.song_count, album.songCount, album.songCount), album));
                 }
             }
             adapter.submitList(items);

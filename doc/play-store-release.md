@@ -28,16 +28,16 @@ flowchart TD
 
 ## 0. 公開前の準備（このアプリ固有）
 
-2026-10-19 時点で、次の項目が未対応のため提出できない。詳細は [stories.md](stories.md) と [tasks.md](tasks.md) の No.31〜36。
+2026-10-19 時点の状況。詳細は [stories.md](stories.md) と [tasks.md](tasks.md) の No.31〜36。
 
 | 状態 | 項目 | 対応するストーリー |
 | --- | --- | --- |
-| ☐ | targetSdk・compileSdk を 36 にする（2026-08-31 以降、新規アプリと更新に必須） | No.31 |
-| ☐ | Android Gradle Plugin の更新、Gradle Wrapper の同梱 | No.32 |
-| ☐ | Room のスキーマ管理と移行の仕組み（公開後のアップデートでデータを消さないため） | No.33 |
-| ☐ | 署名付きリリースビルド、R8 による縮小 | No.34（本書の手順2〜3） |
+| ☑ | targetSdk・compileSdk を 36 にする（2026-08-31 以降、新規アプリと更新に必須） | No.31 |
+| ☑ | Android Gradle Plugin の更新（8.13.2）、Gradle Wrapper の同梱 | No.32 |
+| ☑ | Room のスキーマ管理と移行の仕組み（公開後のアップデートでデータを消さないため） | No.33 |
+| ◐ | 署名付きリリースビルド、R8 による縮小（設定済み。正式なアップロード鍵の作成が残る） | No.34（本書の手順2〜3） |
 | ☐ | Android 13 以降の実機での動作確認 | No.35 |
-| ☐ | ストア素材・掲載文・プライバシーポリシーの公開 URL | No.36（本書の手順5〜6） |
+| ◐ | ストア素材・掲載文・プライバシーポリシーの公開 URL（素材と文面は [store/](store/) と [privacy-policy.md](privacy-policy.md) に作成済み。ページの公開が残る） | No.36（本書の手順5〜6） |
 
 ### 公開すると変えられないものを決めておく
 
@@ -95,7 +95,7 @@ keystore.properties
 *.keystore
 ```
 
-`app/build.gradle` に、ファイルがあるときだけ署名する設定を追加する（CI など鍵が無い環境でもデバッグビルドは通る）。
+`app/build.gradle` には、ファイルがあるときだけ署名する次の設定を**追加済み**（CI など鍵が無い環境でもデバッグビルドは通る）。
 
 ```groovy
 def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -130,14 +130,14 @@ CI でリリースビルドを作る場合は、鍵を Base64 にして GitHub �
 
 ## 3. リリース版 AAB のビルド
 
-1. `app/build.gradle` の `versionCode` を、前回アップロードした値より大きくする（初回は 1 のままでよい）。`versionName` は利用者に見える版数（例: `1.0.0`）。
+1. `app/build.gradle` の `versionName`（利用者に見える版数、「メジャー.マイナー.パッチ」）と `versionCode` を上げる。`versionCode` は「メジャー×10000 + マイナー×100 + パッチ」（例: 1.0.0 → 10000、1.2.3 → 10203）。このルールは単体テスト `BuildConfigSpecTest` が検査する。
 2. AAB をビルドする。
 
 ```sh
 ./gradlew bundleRelease
 ```
 
-Gradle Wrapper が無い間（No.32 の対応前）は、Gradle 8.4 と JDK 17 を直接使う（[README.md](../README.md) と環境メモを参照）。
+JDK 17 が必要（`gradle/gradle-daemon-jvm.properties` で指定）。
 
 3. 出力: `app/build/outputs/bundle/release/app-release.aab`
 4. **縮小（R8）を有効にした状態で必ず動作確認する。** AAB は端末に直接入れられないため、`bundletool` で APK に変換して入れるか、次の手順7の内部テストで配信して確認する。Glide・Room・Hilt・Media3 の主要な画面と再生を一通り試す。
@@ -185,10 +185,10 @@ Gradle Wrapper が無い間（No.32 の対応前）は、Gradle 8.4 と JDK 17 �
 | --- | --- | --- |
 | アプリ名 | 30文字以内 | |
 | 簡単な説明 | 80文字以内 | 例: 「端末のMP3を再生。シャッフル・リピート、歌詞、イコライザー、録音にも対応」 |
-| 詳しい説明 | 4,000文字以内 | README の「主な機能」をもとに作成 |
-| アプリアイコン | 512×512 の PNG（32bit、1MB以内） | `ic_launcher_foreground` / `background` から書き出す |
-| フィーチャー グラフィック | 1024×500 の JPEG または 24bit PNG（透過なし） | 新規作成 |
-| スクリーンショット | スマートフォン用を2〜8枚 | ライブラリ（リスト／アイコン表示）、プレイヤー、グループ再生、設定。日本語・英語の両方 |
+| 詳しい説明 | 4,000文字以内 | 文面は [store/listing.md](store/listing.md) |
+| アプリアイコン | 512×512 の PNG（32bit、1MB以内） | [store/icon-512.png](store/icon-512.png) |
+| フィーチャー グラフィック | 1024×500 の JPEG または 24bit PNG（透過なし） | [store/feature-graphic-ja.jpg](store/feature-graphic-ja.jpg) / [-en.jpg](store/feature-graphic-en.jpg) |
+| スクリーンショット | スマートフォン用を2〜8枚。長辺は短辺の2倍まで | [store/screenshots/](store/screenshots/)（日本語・英語各5枚、1388×2776） |
 | アプリのカテゴリ | | 「音楽＆オーディオ」 |
 | 連絡先 | メールアドレス（必須） | |
 
@@ -229,10 +229,10 @@ flowchart LR
 
 ## 提出前チェックリスト
 
-- [ ] targetSdk 36、compileSdk 36 でビルドできる
+- [x] targetSdk 36、compileSdk 36 でビルドできる
 - [ ] パッケージ名を確定した
 - [ ] `versionCode` を前回より増やした
-- [ ] R8 を有効にしたリリースビルドで主要機能が動く
+- [x] R8 を有効にしたリリースビルドで主要機能が動く（エミュレータで確認。実機でも確認する）
 - [ ] アップロード鍵とパスワードをバックアップした（コミットしていない）
 - [ ] プライバシーポリシーを公開 URL に掲載した
 - [ ] アプリのコンテンツの申告をすべて完了した

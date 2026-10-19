@@ -83,21 +83,21 @@
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="15分" />
+            android:text="@string/sleep_timer_15" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_30"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="30分" />
+            android:text="@string/sleep_timer_30" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_60"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="60分" />
+            android:text="@string/sleep_timer_60" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_cancel"

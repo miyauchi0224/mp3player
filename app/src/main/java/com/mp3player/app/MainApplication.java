@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.HiltAndroidApp;
 
 import com.mp3player.app.data.MusicRepository;
+import com.mp3player.app.data.AppLanguage;
 import com.mp3player.app.data.UserPreferences;
 import com.mp3player.app.playback.PlayerController;
 
@@ -48,11 +49,7 @@ public class MainApplication extends Application {
     }
 
     private void applyLanguage() {
-        String language = userPreferences.getLanguage();
-        if (UserPreferences.LANGUAGE_SYSTEM.equals(language)) {
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList());
-        } else {
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(language));
-        }
+        AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(AppLanguage.languageTags(userPreferences.getLanguage())));
     }
 }

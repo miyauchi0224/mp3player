@@ -118,6 +118,10 @@ public class LibraryViewModel extends ViewModel {
         searchQuery.setValue(query);
     }
 
+    public LiveData<com.mp3player.app.data.ScanProgress> getScanProgress() {
+        return repository.getScanProgress();
+    }
+
     public LiveData<List<Song>> getFilteredSongs() {
         return filteredSongs;
     }

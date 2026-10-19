@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.mp3player.app.data.local.entity.FolderSummary;
+import com.mp3player.app.R;
 import com.mp3player.app.databinding.ItemFolderCheckBinding;
 
 public class FolderCheckAdapter extends RecyclerView.Adapter<FolderCheckAdapter.ViewHolder> {
@@ -59,7 +60,10 @@ public class FolderCheckAdapter extends RecyclerView.Adapter<FolderCheckAdapter.
 
         void bind(FolderSummary folder) {
             binding.textTitle.setText(folder.getFolderName());
-            binding.textSubtitle.setText(folder.songCount + "曲 ・ " + folder.folderPath);
+            android.content.res.Resources res = binding.getRoot().getResources();
+            binding.textSubtitle.setText(res.getString(R.string.folder_subtitle,
+                    res.getQuantityString(R.plurals.song_count, folder.songCount, folder.songCount),
+                    folder.folderPath));
             binding.checkbox.setChecked(selected.contains(folder.folderPath));
             binding.getRoot().setOnClickListener(v -> {
                 if (selected.contains(folder.folderPath)) {

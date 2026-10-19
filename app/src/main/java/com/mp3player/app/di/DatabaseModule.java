@@ -26,7 +26,9 @@ public class DatabaseModule {
     @Provides
     @Singleton
     public AppDatabase provideDatabase(@ApplicationContext Context context) {
-        return Room.databaseBuilder(context, AppDatabase.class, "mp3player.db").build();
+        return Room.databaseBuilder(context, AppDatabase.class, "mp3player.db")
+                .addMigrations(AppDatabase.MIGRATIONS)
+                .build();
     }
 
     @Provides

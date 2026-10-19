@@ -1,6 +1,7 @@
 package com.mp3player.app.data;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,9 +32,27 @@ public class MusicRepository {
         this.executor = executor;
     }
 
+    private final MutableLiveData<ScanProgress> scanProgress = new MutableLiveData<>(ScanProgress.idle());
+
+    public LiveData<ScanProgress> getScanProgress() {
+        return scanProgress;
+    }
+
     public void scanLibrary() {
+        scanProgress.postValue(ScanProgress.scanning(0, 0));
         executor.execute(() -> {
-            List<Song> scanned = scanner.scan();
+            try {
+                syncLibrary();
+            } finally {
+                scanProgress.postValue(ScanProgress.idle());
+            }
+        });
+    }
+
+    private void syncLibrary() {
+        {
+            List<Song> scanned = scanner.scan((processed, total) ->
+                    scanProgress.postValue(ScanProgress.scanning(processed, total)));
             List<Long> existingIds = songDao.getAllIds();
             Set<Long> existingSet = new HashSet<>(existingIds);
             Set<Long> scannedIds = new HashSet<>();
@@ -61,7 +80,7 @@ public class MusicRepository {
             if (!removedIds.isEmpty()) {
                 songDao.deleteByIds(removedIds);
             }
-        });
+        }
     }
 
     public LiveData<List<Song>> getAllSongs() {

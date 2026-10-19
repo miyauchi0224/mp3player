@@ -35,6 +35,8 @@ public class UserPreferences {
     private static final String KEY_LANGUAGE = "language";
     private static final String KEY_TARGET_FOLDERS = "target_folders";
     private static final String KEY_SONG_VIEW_MODE = "song_view_mode";
+    private static final String KEY_LYRICS_FOLDER = "lyrics_folder";
+    private static final String KEY_BATTERY_PROMPT_SHOWN = "battery_prompt_shown";
 
     private final SharedPreferences prefs;
     private final List<Runnable> targetFoldersListeners = new CopyOnWriteArrayList<>();
@@ -90,5 +92,22 @@ public class UserPreferences {
     public void setSongViewMode(SongViewMode mode) {
         prefs.edit().putString(KEY_SONG_VIEW_MODE, mode.key()).apply();
         songViewMode.setValue(mode);
+    }
+
+    /** 歌詞（.lrc）を探すフォルダ（SAFのツリーURI）。未設定なら null */
+    public String getLyricsFolder() {
+        return prefs.getString(KEY_LYRICS_FOLDER, null);
+    }
+
+    public void setLyricsFolder(String treeUri) {
+        prefs.edit().putString(KEY_LYRICS_FOLDER, treeUri).apply();
+    }
+
+    public boolean isBatteryPromptShown() {
+        return prefs.getBoolean(KEY_BATTERY_PROMPT_SHOWN, false);
+    }
+
+    public void setBatteryPromptShown() {
+        prefs.edit().putBoolean(KEY_BATTERY_PROMPT_SHOWN, true).apply();
     }
 }

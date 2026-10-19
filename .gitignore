@@ -10,3 +10,8 @@
 local.properties
 /app/build
 /app/release
+
+# 署名鍵と鍵の情報（コミットしない）
+keystore.properties
+*.jks
+*.keystore

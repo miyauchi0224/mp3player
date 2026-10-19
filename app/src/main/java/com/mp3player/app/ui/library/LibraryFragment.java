@@ -71,6 +71,20 @@ public class LibraryFragment extends Fragment {
         });
 
         binding.buttonSort.setOnClickListener(this::showSortMenu);
+        viewModel.getScanProgress().observe(getViewLifecycleOwner(), progress -> {
+            boolean visible = progress != null && progress.scanning;
+            binding.scanProgressContainer.setVisibility(visible ? View.VISIBLE : View.GONE);
+            if (!visible) {
+                return;
+            }
+            binding.progressScan.setIndeterminate(progress.isIndeterminate());
+            if (progress.isIndeterminate()) {
+                binding.textScanProgress.setText(R.string.scan_progress_starting);
+            } else {
+                binding.progressScan.setProgressCompat(progress.percent(), true);
+                binding.textScanProgress.setText(getString(R.string.scan_progress, progress.processed, progress.total));
+            }
+        });
         binding.buttonViewMode.setOnClickListener(v ->
                 userPreferences.setSongViewMode(userPreferences.getSongViewMode().getValue().toggle()));
         userPreferences.getSongViewMode().observe(getViewLifecycleOwner(), mode ->

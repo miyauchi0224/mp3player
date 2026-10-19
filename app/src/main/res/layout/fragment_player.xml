@@ -17,14 +17,22 @@
             android:id="@+id/button_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_previous"
+            android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@null" />
+            android:contentDescription="@string/action_back" />
 
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/button_favorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_favorite_border"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_favorite" />
 
         <ImageButton
             android:id="@+id/button_lyrics"
@@ -144,12 +152,12 @@
         android:gravity="center_vertical">
 
         <ImageButton
-            android:id="@+id/button_favorite"
+            android:id="@+id/button_shuffle"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_favorite_border"
+            android:src="@drawable/ic_shuffle"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/action_favorite" />
+            android:contentDescription="@string/action_shuffle" />
 
         <ImageButton
             android:id="@+id/button_previous"
@@ -210,7 +218,7 @@
             android:insetBottom="0dp"
             android:padding="0dp"
             android:minWidth="0dp"
-            android:text="−"
+            android:text="@string/symbol_minus"
             android:textSize="18sp"
             android:contentDescription="@string/action_speed_down" />
 
@@ -237,7 +245,7 @@
             android:insetBottom="0dp"
             android:padding="0dp"
             android:minWidth="0dp"
-            android:text="+"
+            android:text="@string/symbol_plus"
             android:textSize="18sp"
             android:contentDescription="@string/action_speed_up" />
     </LinearLayout>

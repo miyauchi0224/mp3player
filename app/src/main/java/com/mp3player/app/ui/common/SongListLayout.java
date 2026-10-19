@@ -18,16 +18,35 @@ public final class SongListLayout {
     private SongListLayout() {
     }
 
-    public static void apply(RecyclerView recyclerView, SongAdapter adapter, SongViewMode mode,
+    public static void apply(RecyclerView recyclerView, ViewModeAdapter adapter, SongViewMode mode,
                              @Nullable ImageButton toggleButton) {
+        apply(recyclerView, new ViewModeAdapter[]{adapter}, mode, toggleButton, null);
+    }
+
+    /**
+     * @param isHeader 見出しの位置なら true（グリッドで1行全体を使う）。見出しが無ければ null
+     */
+    public static void apply(RecyclerView recyclerView, ViewModeAdapter[] adapters, SongViewMode mode,
+                             @Nullable ImageButton toggleButton, @Nullable java.util.function.IntPredicate isHeader) {
         if (mode == SongViewMode.GRID) {
             int widthDp = recyclerView.getResources().getConfiguration().screenWidthDp;
-            recyclerView.setLayoutManager(new GridLayoutManager(recyclerView.getContext(),
-                    GridSpan.count(widthDp, MIN_CELL_WIDTH_DP)));
+            int spanCount = GridSpan.count(widthDp, MIN_CELL_WIDTH_DP);
+            GridLayoutManager grid = new GridLayoutManager(recyclerView.getContext(), spanCount);
+            if (isHeader != null) {
+                grid.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                    @Override
+                    public int getSpanSize(int position) {
+                        return ListGestures.spanSize(isHeader.test(position), spanCount);
+                    }
+                });
+            }
+            recyclerView.setLayoutManager(grid);
         } else {
             recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         }
-        adapter.setViewMode(mode);
+        for (ViewModeAdapter adapter : adapters) {
+            adapter.setViewMode(mode);
+        }
         if (toggleButton != null) {
             updateToggle(toggleButton, mode);
         }

@@ -25,7 +25,16 @@ public class MediaStoreScanner {
         this.context = context;
     }
 
+    /** スキャンの進み具合を受け取る（バックグラウンドスレッドから呼ばれる） */
+    public interface ProgressListener {
+        void onProgress(int processed, int total);
+    }
+
     public List<Song> scan() {
+        return scan((processed, total) -> { });
+    }
+
+    public List<Song> scan(ProgressListener listener) {
         List<Song> result = new ArrayList<>();
         Uri collection = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String[] projection = {
@@ -55,7 +64,13 @@ public class MediaStoreScanner {
             int durationCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION);
             int dateAddedCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_ADDED);
 
+            int total = cursor.getCount();
+            int processed = 0;
             while (cursor.moveToNext()) {
+                processed++;
+                if (ScanProgress.shouldReport(processed, total)) {
+                    listener.onProgress(processed, total);
+                }
                 String data = cursor.getString(dataCol);
                 String folderPath = "";
                 if (data != null && data.contains("/")) {

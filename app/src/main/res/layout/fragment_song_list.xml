@@ -22,9 +22,9 @@
             android:id="@+id/button_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_previous"
+            android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@null" />
+            android:contentDescription="@string/action_back" />
 
         <TextView
             android:id="@+id/text_header_title"
@@ -45,7 +45,7 @@
             android:src="@drawable/ic_playlist_add"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:visibility="gone"
-            android:contentDescription="@null" />
+            android:contentDescription="@string/action_more" />
 
         <ImageButton
             android:id="@+id/button_view_mode"
@@ -130,7 +130,7 @@
             android:layout_margin="16dp"
             android:src="@drawable/ic_play"
             android:visibility="gone"
-            android:contentDescription="@null" />
+            android:contentDescription="@string/action_play_all" />
 
     </FrameLayout>
 

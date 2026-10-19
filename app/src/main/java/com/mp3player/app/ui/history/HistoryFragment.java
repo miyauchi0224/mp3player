@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ConcatAdapter;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +21,17 @@ import com.mp3player.app.R;
 import com.mp3player.app.data.local.entity.Song;
 import com.mp3player.app.databinding.FragmentSongListBinding;
 import com.mp3player.app.ui.common.HeaderAdapter;
+import com.mp3player.app.ui.common.SongListLayout;
+import com.mp3player.app.ui.common.ViewModeAdapter;
 import com.mp3player.app.ui.common.SongAdapter;
 import com.mp3player.app.ui.common.SongMenuHelper;
 import com.mp3player.app.ui.playlist.AddToPlaylistDialogFragment;
 
 @AndroidEntryPoint
 public class HistoryFragment extends Fragment {
+
+    @javax.inject.Inject
+    com.mp3player.app.data.UserPreferences userPreferences;
 
     private FragmentSongListBinding binding;
     private HistoryViewModel viewModel;
@@ -54,6 +58,7 @@ public class HistoryFragment extends Fragment {
         binding.buttonBack.setVisibility(View.GONE);
         binding.buttonMore.setVisibility(View.VISIBLE);
         binding.buttonMore.setImageResource(R.drawable.ic_delete);
+        binding.buttonMore.setContentDescription(getString(R.string.action_clear_history));
         binding.buttonMore.setOnClickListener(v -> new AlertDialog.Builder(requireContext())
                 .setMessage(R.string.history_clear_confirm)
                 .setPositiveButton(R.string.dialog_ok, (dialog, which) -> viewModel.clearHistory())
@@ -89,7 +94,12 @@ public class HistoryFragment extends Fragment {
         ConcatAdapter concatAdapter = new ConcatAdapter(
                 new HeaderAdapter(getString(R.string.history_recent)), recentAdapter,
                 new HeaderAdapter(getString(R.string.history_most_played)), mostPlayedAdapter);
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        // 「最近再生した曲」「再生回数が多い曲」の見出しは、グリッドでも1行全体を使う。
+        // 切り替えボタンは親の LibraryFragment のヘッダーにある
+        userPreferences.getSongViewMode().observe(getViewLifecycleOwner(), mode ->
+                SongListLayout.apply(binding.recyclerView, new ViewModeAdapter[]{recentAdapter, mostPlayedAdapter},
+                        mode, null,
+                        position -> concatAdapter.getWrappedAdapterAndPosition(position).first instanceof HeaderAdapter));
         binding.recyclerView.setAdapter(concatAdapter);
 
         viewModel.getRecentlyPlayed().observe(getViewLifecycleOwner(), songs -> {

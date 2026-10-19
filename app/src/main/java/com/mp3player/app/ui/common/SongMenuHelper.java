@@ -16,7 +16,7 @@ public class SongMenuHelper {
     }
 
     public static void show(Context context, Song song, Callback callback) {
-        String favoriteLabel = song.favorite ? "お気に入りから削除" : "お気に入りに追加";
+        String favoriteLabel = context.getString(song.favorite ? R.string.favorite_remove : R.string.favorite_add);
         String[] items = {
                 favoriteLabel,
                 context.getString(R.string.action_add_to_playlist),

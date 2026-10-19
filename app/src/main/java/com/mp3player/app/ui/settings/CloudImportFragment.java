@@ -69,7 +69,7 @@ public class CloudImportFragment extends Fragment {
                 musicRepository.scanLibrary();
                 mainHandler.post(() -> {
                     if (binding != null) {
-                        binding.textResult.setText(getString(R.string.cloud_import_success, fileCount));
+                        binding.textResult.setText(getResources().getQuantityString(R.plurals.cloud_import_success, fileCount, fileCount));
                     }
                 });
             }

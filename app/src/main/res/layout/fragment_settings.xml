@@ -32,6 +32,10 @@
             layout="@layout/item_setting_row" />
 
         <include
+            android:id="@+id/row_lyrics_folder"
+            layout="@layout/item_setting_row" />
+
+        <include
             android:id="@+id/row_export_playlist"
             layout="@layout/item_setting_row" />
 

@@ -13,6 +13,8 @@ public class PlaybackUiState {
     public boolean isPlaying = false;
     public long duration = 0;
     public int repeatMode = Player.REPEAT_MODE_OFF;
+    /** プレイヤー画面のシャッフルが有効か（キューを並べ替えて実現している） */
+    public boolean shuffled = false;
     public float volume = 1f;
     public float speed = 1f;
     public boolean sleepTimerActive = false;

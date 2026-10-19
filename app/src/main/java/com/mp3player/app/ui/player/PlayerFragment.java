@@ -17,16 +17,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.Player;
 import androidx.navigation.Navigation;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 import com.mp3player.app.R;
+import com.mp3player.app.data.UserPreferences;
 import com.mp3player.app.data.local.entity.Song;
 import com.mp3player.app.databinding.FragmentPlayerBinding;
+import com.mp3player.app.playback.PlaybackSpeed;
 import com.mp3player.app.playback.PlaybackUiState;
 import com.mp3player.app.ui.common.ArtworkLoader;
 import com.mp3player.app.ui.playlist.AddToPlaylistDialogFragment;
@@ -34,14 +37,17 @@ import com.mp3player.app.ui.playlist.AddToPlaylistDialogFragment;
 @AndroidEntryPoint
 public class PlayerFragment extends Fragment {
 
+    @Inject
+    UserPreferences userPreferences;
+
     private FragmentPlayerBinding binding;
     private PlayerViewModel viewModel;
     private Song currentSong;
     private long lyricsLoadedForSongId = -1;
     private List<LyricLine> currentLyrics = new ArrayList<>();
     private boolean lyricsVisible = false;
-    private static final float MIN_SPEED = 0.5f;
-    private static final float MAX_SPEED = 4.0f;
+    private static final float MIN_SPEED = PlaybackSpeed.MIN;
+    private static final float MAX_SPEED = PlaybackSpeed.MAX;
     private static final float SPEED_STEP = 0.1f;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -80,6 +86,7 @@ public class PlayerFragment extends Fragment {
         binding.buttonNext.setOnClickListener(v -> viewModel.skipToNext());
         binding.buttonPrevious.setOnClickListener(v -> viewModel.skipToPrevious());
         binding.buttonRepeat.setOnClickListener(v -> viewModel.cycleRepeatMode());
+        binding.buttonShuffle.setOnClickListener(v -> viewModel.toggleShuffle());
         binding.buttonFavorite.setOnClickListener(v -> {
             if (currentSong != null) {
                 viewModel.toggleFavorite(currentSong);
@@ -98,7 +105,7 @@ public class PlayerFragment extends Fragment {
         binding.buttonLyrics.setOnClickListener(v -> toggleLyrics());
         binding.buttonSpeedDown.setOnClickListener(v -> changeSpeed(currentSpeed - SPEED_STEP));
         binding.buttonSpeedUp.setOnClickListener(v -> changeSpeed(currentSpeed + SPEED_STEP));
-        binding.textSpeed.setOnClickListener(v -> changeSpeed(1f));
+        binding.textSpeed.setOnClickListener(v -> showSpeedPresets());
         renderSpeed(currentSpeed);
 
         binding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -132,17 +139,32 @@ public class PlayerFragment extends Fragment {
         });
     }
 
+    private void showSpeedPresets() {
+        String[] labels = new String[SpeedPresets.VALUES.length];
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = SpeedPresets.label(SpeedPresets.VALUES[i]);
+        }
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle(R.string.speed_label)
+                .setSingleChoiceItems(labels, SpeedPresets.indexOf(currentSpeed), (dialog, which) -> {
+                    changeSpeed(SpeedPresets.VALUES[which]);
+                    dialog.dismiss();
+                })
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .show();
+    }
+
     private void changeSpeed(float speed) {
-        // 0.1刻みに丸めて浮動小数点の誤差を吸収する
-        float rounded = Math.round(speed * 10f) / 10f;
+        // 0.01刻みに丸めて浮動小数点の誤差を吸収する（0.75倍などの候補を表せるようにする）
+        float rounded = Math.round(speed * 100f) / 100f;
         float clamped = Math.max(MIN_SPEED, Math.min(MAX_SPEED, rounded));
         renderSpeed(clamped);
         viewModel.setPlaybackSpeed(clamped);
     }
 
     private void renderSpeed(float speed) {
-        currentSpeed = Math.round(speed * 10f) / 10f;
-        binding.textSpeed.setText(String.format(Locale.getDefault(), "%.1fx", currentSpeed));
+        currentSpeed = Math.round(speed * 100f) / 100f;
+        binding.textSpeed.setText(SpeedPresets.label(currentSpeed));
         binding.buttonSpeedDown.setEnabled(currentSpeed > MIN_SPEED);
         binding.buttonSpeedUp.setEnabled(currentSpeed < MAX_SPEED);
     }
@@ -164,9 +186,10 @@ public class PlayerFragment extends Fragment {
         currentLyrics = new ArrayList<>();
         binding.textLyrics.setText(R.string.lyrics_empty);
 
+        android.content.Context appContext = requireContext().getApplicationContext();
+        String lyricsFolder = userPreferences.getLyricsFolder();
         new Thread(() -> {
-            File lrcFile = LyricsParser.findLrcFile(song.data);
-            List<LyricLine> parsed = lrcFile != null ? LyricsParser.parse(lrcFile) : new ArrayList<>();
+            List<LyricLine> parsed = LyricsLoader.load(appContext, song, lyricsFolder);
             handler.post(() -> {
                 if (binding == null || song.id != lyricsLoadedForSongId) {
                     return;
@@ -185,14 +208,7 @@ public class PlayerFragment extends Fragment {
         if (binding == null || currentLyrics.isEmpty()) {
             return;
         }
-        int activeIndex = -1;
-        for (int i = 0; i < currentLyrics.size(); i++) {
-            if (currentLyrics.get(i).timeMs <= position) {
-                activeIndex = i;
-            } else {
-                break;
-            }
-        }
+        int activeIndex = LyricsHighlighter.activeIndex(currentLyrics, position);
         SpannableStringBuilder builder = new SpannableStringBuilder();
         for (int i = 0; i < currentLyrics.size(); i++) {
             if (i > 0) {
@@ -218,6 +234,8 @@ public class PlayerFragment extends Fragment {
         renderSpeed(state.speed);
 
         ArtworkLoader.into(binding.imageArt, state.songId, state.artworkUri);
+
+        binding.buttonShuffle.setAlpha(state.shuffled ? 1f : 0.4f);
 
         if (state.repeatMode == Player.REPEAT_MODE_ONE) {
             binding.buttonRepeat.setImageResource(R.drawable.ic_repeat_one);

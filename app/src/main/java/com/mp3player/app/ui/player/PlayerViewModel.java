@@ -65,6 +65,10 @@ public class PlayerViewModel extends ViewModel {
         playerController.seekTo(positionMs);
     }
 
+    public void toggleShuffle() {
+        playerController.toggleShuffle();
+    }
+
     public void cycleRepeatMode() {
         playerController.cycleRepeatMode();
     }

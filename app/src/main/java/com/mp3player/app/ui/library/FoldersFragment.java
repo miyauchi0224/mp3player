@@ -57,7 +57,7 @@ public class FoldersFragment extends Fragment {
             if (folders != null) {
                 for (FolderSummary folder : folders) {
                     items.add(new GroupItem("folder:" + folder.folderPath, folder.getFolderName(),
-                            folder.songCount + "曲", folder));
+                            getResources().getQuantityString(R.plurals.song_count, folder.songCount, folder.songCount), folder));
                 }
             }
             adapter.submitList(items);
