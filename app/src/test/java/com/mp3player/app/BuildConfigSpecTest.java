@@ -98,6 +98,17 @@ public class BuildConfigSpecTest {
         assertEquals(expected, intSetting(gradle, "versionCode"));
     }
 
+    /** Play Console に登録したパッケージ名。公開後は変更できないため、食い違いを検出する */
+    private static final String PLAY_CONSOLE_APPLICATION_ID = "io.github.miyauchi0224.mp3player";
+
+    @Test
+    public void applicationId_matchesPlayConsoleRegistration() throws IOException {
+        Matcher m = Pattern.compile("applicationId\\s+\"([^\"]+)\"").matcher(read("build.gradle"));
+        assertTrue("applicationId が build.gradle に無い", m.find());
+
+        assertEquals(PLAY_CONSOLE_APPLICATION_ID, m.group(1));
+    }
+
     @Test
     public void manifest_optsIntoPredictiveBack() throws IOException {
         String manifest = read("src/main/AndroidManifest.xml");

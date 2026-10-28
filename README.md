@@ -109,7 +109,7 @@ Android Studioで開けるプロジェクトとして、README記載の機能を
 
 - 開発スタイルはTDD（機能単位で、失敗するテスト → 実装 → テスト成功）。
 - 単体テスト: `./gradlew testDebugUnitTest`（`app/src/test`）
-- 端末・エミュレータでのテスト: `./gradlew connectedDebugAndroidTest`（`app/src/androidTest`）。結果の受け取りに失敗する場合は、`./gradlew installDebug installDebugAndroidTest` のあと `adb shell am instrument -w com.mp3player.app.test/androidx.test.runner.AndroidJUnitRunner` で直接実行する。
+- 端末・エミュレータでのテスト: `./gradlew connectedDebugAndroidTest`（`app/src/androidTest`）。結果の受け取りに失敗する場合は、`./gradlew installDebug installDebugAndroidTest` のあと `adb shell am instrument -w io.github.miyauchi0224.mp3player.test/androidx.test.runner.AndroidJUnitRunner` で直接実行する。
 
 ### DBのスキーマを変えるとき
 

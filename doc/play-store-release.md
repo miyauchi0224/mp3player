@@ -41,7 +41,7 @@ flowchart TD
 
 ### 公開すると変えられないものを決めておく
 
-- **パッケージ名（applicationId）**: 今は `com.mp3player.app`。**一度公開すると変更できず**、他のアプリに使われている名前は登録できない。自分が持っているドメインを逆にした名前（例: `io.github.<ユーザー名>.mp3player`）にするなら、最初のアップロードの前に変える。
+- **パッケージ名（applicationId）**: **`io.github.miyauchi0224.mp3player`** で Play Console に登録済み（2026-10-19）。**一度公開すると変更できない**。`BuildConfigSpecTest` が、build.gradle の値が登録済みの名前と一致することを検査する。ソースコードのパッケージ（`namespace`）は `com.mp3player.app` のままでよい。
 - **アプリ名**: 今は `mp3player`（`app_name`）。ストアの表示名は後から変えられるが、検索で見つけてもらいやすく、他と区別できる名前を検討する。
 
 ## 1. 開発者アカウントの登録

@@ -16,7 +16,7 @@ android {
     compileSdk 36
 
     defaultConfig {
-        applicationId "com.mp3player.app"
+        applicationId "io.github.miyauchi0224.mp3player"
         minSdk 24
         targetSdk 36
         // versionName は「メジャー.マイナー.パッチ」。versionCode = メジャー×10000 + マイナー×100 + パッチ

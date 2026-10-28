@@ -31,35 +31,38 @@ mp3player - シンプルな音楽プレーヤー
 **簡単な説明**（80文字以内）
 
 ```
-端末のMP3をすぐ再生。アルバム単位のシャッフル・リピート、歌詞表示、イコライザー、再生速度0.5〜4倍に対応。
+無料・広告なしのMP3プレーヤー。再生速度0.5〜4倍、アプリを閉じても再生を続けるバックグラウンド再生に対応。
 ```
 
 **詳しい説明**（4,000文字以内）
 
 ```
-端末に保存したMP3を、シンプルな操作で気持ちよく再生できる音楽プレーヤーです。インターネットに接続しないので、聴いている曲の情報が外部に送られることはありません。
+端末に保存したMP3を再生する、無料のシンプルな音楽プレーヤーです。
+広告は一切表示しません。アプリ内課金もありません。
 
-■ ライブラリ
-・端末内のMP3を自動で読み込み、曲・アルバム・アーティスト・フォルダ別に表示
-・リスト表示とアイコン表示（ジャケットを大きく表示）を切り替え
-・MP3に埋め込まれたジャケット画像を表示
-・曲名・アーティストで検索、曲名・アーティスト・追加日で並び替え
-・表示するフォルダを選べます
+■ 主な機能
+・音声の再生
+  端末内のMP3を自動で読み込み、曲・アルバム・アーティスト・フォルダ別にすぐ再生できます。
+・スピードコントロール
+  再生速度を0.5〜4倍で調整できます。−／＋ボタンで0.1倍ずつ、または0.75倍・1.5倍・2倍などの候補からワンタップで選べます。語学学習、講義やオーディオブックの聞き流しにも便利です。
+・バックグラウンド再生
+  アプリを閉じても、画面を消しても再生を続けます。通知やロック画面、Bluetoothイヤホンのボタンから操作できます。
 
-■ 再生
-・アルバム・フォルダ単位でシャッフル再生、1曲リピート、全曲リピート
-・再生速度を0.5〜4倍で調整（語学学習や作業用BGMに）
-・イコライザー、音量調整、スリープタイマー
+■ そのほかの機能
+・アルバム・フォルダ単位のシャッフル再生、1曲リピート、全曲リピート
+・リスト表示とアイコン表示（ジャケットを大きく表示）の切り替え、MP3に埋め込まれたジャケット画像の表示
 ・歌詞表示（MP3に埋め込まれた歌詞、またはLRCファイル。再生位置に合わせて強調表示）
+・イコライザー、音量調整、スリープタイマー
 ・前回の曲・再生位置・速度を次回起動時に復元
-・通知・ロック画面・Bluetoothイヤホン・ホーム画面ウィジェットから操作
-・Android Auto に対応
-
-■ プレイリストほか
-・プレイリストの作成・並べ替え、M3U形式でのエクスポート／インポート
-・お気に入り、最近再生した曲、再生回数ランキング
-・音声録音、クラウドストレージ（Googleドライブ等）からのMP3取り込み
+・プレイリスト（作成・並べ替え・M3U形式でのエクスポート／インポート）、お気に入り、再生履歴
+・ホーム画面ウィジェット、Android Auto
 ・ダークモード、日本語／英語表示
+
+■ プライバシー
+インターネットに接続しないアプリです。再生履歴などの情報はすべて端末内にだけ保存し、外部に送信しません。
+
+■ 動作確認端末
+Google Pixel 8 Pro
 ```
 
 ## English（en-US）
@@ -73,35 +76,38 @@ mp3player: Simple Music Player
 **Short description** (80 characters max)
 
 ```
-Play your MP3s. Album shuffle & repeat, lyrics, equalizer, and 0.5x-4x speed.
+Free, ad-free MP3 player with 0.5x-4x speed control and background playback.
 ```
 
 **Full description** (4,000 characters max)
 
 ```
-A simple, comfortable music player for the MP3 files on your device. The app never connects to the internet, so what you listen to stays on your device.
+A free, simple music player for the MP3 files on your device.
+No ads, ever. No in-app purchases.
 
-LIBRARY
-- Automatically finds MP3s on your device and organizes them by song, album, artist, and folder
-- Switch between list view and icon view with large cover art
-- Shows cover art embedded in your MP3 files
-- Search by title or artist; sort by title, artist, or date added
-- Choose which folders to show
+KEY FEATURES
+- Audio playback
+  Finds the MP3s on your device automatically and lets you play them by song, album, artist, or folder.
+- Speed control
+  Adjust playback speed from 0.5x to 4x. Step by 0.1x with the -/+ buttons, or pick 0.75x, 1.5x, 2x and more with one tap. Great for language learning, lectures, and audiobooks.
+- Background playback
+  Keeps playing when you leave the app or turn off the screen. Control playback from notifications, the lock screen, or your Bluetooth headset.
 
-PLAYBACK
+MORE FEATURES
 - Shuffle, repeat one, or repeat a whole album or folder
-- Playback speed from 0.5x to 4x (great for language learning)
-- Equalizer, volume, and sleep timer
+- List view or icon view with large cover art; shows cover art embedded in your MP3s
 - Lyrics (embedded in the MP3 or from LRC files), highlighted in sync with playback
+- Equalizer, volume, and sleep timer
 - Resumes the last song, position, and speed the next time you open the app
-- Control from notifications, the lock screen, Bluetooth headsets, and a home screen widget
-- Works with Android Auto
-
-PLAYLISTS AND MORE
-- Create and reorder playlists; export and import them as M3U files
-- Favorites, recently played, and most played songs
-- Voice recording, and import MP3s from cloud storage such as Google Drive
+- Playlists (create, reorder, export and import as M3U), favorites, and playback history
+- Home screen widget and Android Auto
 - Dark mode; Japanese and English
+
+PRIVACY
+The app never connects to the internet. Your playback history and settings stay on your device and are never sent anywhere.
+
+TESTED ON
+Google Pixel 8 Pro
 ```
 
 ## そのほかの登録項目
